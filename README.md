@@ -1,8 +1,38 @@
 # claude-dev-team
 
-Add a specialized engineering team to your [Claude Code](https://claude.ai/code) workflow.
+> Your AI development team. Five specialists, one CLI, zero meetings.
 
-Each team member is a named persona profile that shapes how Claude behaves — bringing deep, domain-specific expertise and a consistent personality to your sessions. Team members operate as formal specialized consultants: precise, thorough, security-aware, and focused on their discipline.
+---
+
+## The Idea
+
+You know that feeling when you're deep in a coding session and you wish you had a senior engineer looking over your shoulder — someone who actually knows this domain cold and will tell you straight when something's off?
+
+That's what this is.
+
+`claude-dev-team` gives you a crew of named, specialized Claude personas — each one a formal expert consultant with deep domain knowledge, a distinct way of thinking, and enterprise-grade security instincts baked in. You pick who's on the task, and Claude shows up as that person.
+
+Need to design an API? Call Akira. Writing tests? Robin's got it. Planning a launch? Toni and River. Building a component that has to be accessible and secure? That's Sasha's world.
+
+### How it works in practice
+
+It's genuinely conversational. You open Claude Code and say:
+
+> "Hey, I'm building an auth flow — Akira, what should I think about here?"
+
+And Claude responds as Akira: systems-first, asking about consistency requirements, flagging JWT expiry patterns, pushing back if you're about to store something in the wrong place.
+
+Or you're in planning mode and say:
+
+> "River, help me write the requirements for this feature."
+
+And River takes over: asking what problem you're actually solving, who the user is, what success looks like, what's explicitly out of scope.
+
+You can switch mid-session. You can have Toni frame the messaging for a feature that Akira designed and Robin tested. They don't overlap — each stays in their lane and hands off cleanly.
+
+### The Coordinator
+
+Turn on the coordinator and Claude will ask you who should be on each task before diving in — and tap you on the shoulder when the work drifts into a different domain. It's like having a project manager who routes work to the right person automatically.
 
 ---
 
