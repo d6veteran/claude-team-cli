@@ -21,13 +21,17 @@ red()   { printf '\033[31m%s\033[0m' "$*"; }
 
 die() { echo "$(red "error:") $*" >&2; exit 1; }
 
+lowercase() { echo "$1" | tr '[:upper:]' '[:lower:]'; }
+capitalize() { echo "$1" | awk '{print toupper(substr($0,1,1)) substr($0,2)}'; }
+
 require_profiles_dir() {
   [[ -d "$PROFILES_DIR" ]] || die "Profiles directory not found: $PROFILES_DIR
 Run the installer first: bash install.sh"
 }
 
 resolve_name() {
-  local input="${1,,}"  # lowercase
+  local input
+  input=$(lowercase "$1")
   local profile="$PROFILES_DIR/$input.md"
   [[ -f "$profile" ]] || die "No profile found for '$input'. Run 'claude-team list' to see available team members."
   echo "$profile"
@@ -58,6 +62,7 @@ cmd_list() {
     [[ -f "$profile" ]] || continue
     local name
     name=$(basename "$profile" .md)
+    [[ "$name" == "coordinator" ]] && continue  # coordinator is not a team member
     # Extract the title line (first # heading)
     local title
     title=$(grep -m1 '^# ' "$profile" | sed 's/^# //')
@@ -65,10 +70,18 @@ cmd_list() {
     local role
     role=$(echo "$title" | sed 's/.*— //')
 
-    if [[ "${name^}" == "$active"* ]] || [[ "$name" == "${active,,}" ]]; then
-      printf "  $(green "●") $(bold "%s") — %s $(dim "(active)")\n" "${name^}" "$role"
+    local name_cap
+    name_cap=$(capitalize "$name")
+    local is_active=false
+    if [[ -n "$active" ]]; then
+      local active_lower
+      active_lower=$(lowercase "$active")
+      [[ "$name" == "$active_lower" ]] && is_active=true
+    fi
+    if [[ "$is_active" == true ]]; then
+      printf "  $(green "●") $(bold "%s") — %s $(dim "(active)")\n" "$name_cap" "$role"
     else
-      printf "  $(dim "○") $(bold "%s") — %s\n" "${name^}" "$role"
+      printf "  $(dim "○") $(bold "%s") — %s\n" "$name_cap" "$role"
     fi
   done
 
@@ -88,7 +101,8 @@ cmd_show() {
 
 cmd_use() {
   [[ $# -ge 1 ]] || die "Usage: claude-team use <name>"
-  local name="${1,,}"
+  local name
+  name=$(lowercase "$1")
   local profile
   profile=$(resolve_name "$name")
 
