@@ -316,6 +316,44 @@ claude-dev-team/
 
 ---
 
+## Roadmap
+
+### Now — v0.1 (current)
+
+- Five team member personas — Robin, Akira, Sasha, Toni, River
+- `claude-team` CLI — `use`, `list`, `show`, `reset`, `status`
+- Coordinator layer — proactive team member suggestions and three-mode recommendations
+- One-command installer with interactive coordinator prompt
+
+### Next — v0.2
+
+**Slash command shortcuts**
+
+Single-command team member activation without leaving your session:
+
+| Command | Effect |
+|---|---|
+| `/robin` | Activate Robin (Testing) |
+| `/akira` | Activate Akira (Backend) |
+| `/sasha` | Activate Sasha (Frontend) |
+| `/toni` | Activate Toni (PMM), planning mode |
+| `/river` | Activate River (Product), planning mode |
+| `/robin-plan` | Activate Robin + recommend plan mode |
+| `/sasha-plan` | Activate Sasha + recommend plan mode |
+| `/team` | Show current team status inline |
+| `/team-reset` | Deactivate current team member |
+
+Implemented as Claude Code slash commands in `.claude/commands/` — each invokes `claude-team use <name>` and frames the session with the right mode posture.
+
+### Later — v0.3+
+
+- **Session handoff context** — when switching team members mid-task, the coordinator generates a briefing summary so the new team member doesn't start cold
+- **Local profile overrides** — `~/.claude/team/local/` directory for team-specific customizations without forking the repo
+- **New team members** — Alex (DevOps/Platform), Morgan (Security Engineering), Jordan (Data/ML) under evaluation
+- **Team-scoped profiles** — `claude-team init` creates a `.claude-team/` config in a project repo, so conventions are shared across a dev team
+
+---
+
 ## License
 
 MIT
