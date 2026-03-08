@@ -191,14 +191,15 @@ claude-team status            # see coordinator state + active team member
 ### Quick install
 
 ```bash
-git clone https://gitlab.com/wcurran/claude-dev-team.git
+git clone https://github.com/d6veteran/claude-dev-team.git
 cd claude-dev-team
 bash install.sh
 ```
 
 This installs:
 - Team member profiles to `~/.claude/team/`
-- The `claude-team` CLI to `~/.local/bin/`
+- Slash commands to `~/.claude/commands/`
+- The `claude-team` CLI to `~/.local/bin/` (symlinked — repo updates apply immediately)
 
 Make sure `~/.local/bin` is on your `PATH`:
 
@@ -238,9 +239,12 @@ claude-team coordinator off
 
 # Return to default Claude behavior
 claude-team reset
+
+# Install slash commands (if you skipped install.sh or need to re-install)
+claude-team install-commands
 ```
 
-After activating a team member, **start a new Claude Code session** to apply the profile.
+After activating a team member with `claude-team use`, **start a new Claude Code session** to apply the profile. To switch mid-session without restarting, use the slash commands (`/robin`, `/akira`, etc.) directly in Claude Code.
 
 ---
 
@@ -274,7 +278,8 @@ cp profiles/robin.md profiles/yourname.md
 3. Install it:
 
 ```bash
-claude-team install   # or re-run bash install.sh
+bash install.sh   # full reinstall, or:
+cp profiles/yourname.md ~/.claude/team/yourname.md
 ```
 
 4. Activate it:
@@ -292,6 +297,7 @@ See `examples/CLAUDE.md.example` for a reference of what an activated profile lo
 ```
 claude-dev-team/
 ├── README.md
+├── DEVLOG.md
 ├── install.sh
 ├── bin/
 │   └── claude-team        # CLI script
@@ -302,6 +308,15 @@ claude-dev-team/
 │   ├── toni.md            # Product Marketing Manager
 │   ├── river.md           # Product Manager
 │   └── coordinator.md     # Proactive check-in behavior layer
+├── commands/
+│   ├── robin.md           # /robin slash command
+│   ├── akira.md           # /akira slash command
+│   ├── sasha.md           # /sasha slash command
+│   ├── toni.md            # /toni slash command
+│   ├── river.md           # /river slash command
+│   └── team.md            # /team slash command
+├── tests/
+│   └── run.sh             # Test suite (bash tests/run.sh)
 └── examples/
     └── CLAUDE.md.example  # Reference for an activated profile
 ```
