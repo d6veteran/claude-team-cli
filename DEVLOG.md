@@ -5,6 +5,32 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-03-10] README overhaul — positioning, structure, and conversion content
+
+**Category:** `milestone`
+**Tags:** `readme`, `positioning`, `documentation`, `v0.3`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+Comprehensive README rewrite to improve positioning clarity, fix outdated content, and add conversion-focused content including a team summary table, ICP statement, and before/after exchange.
+
+### Detail
+- **Team reordered** in lifecycle order: River → Akira → Sasha → Jordan → Casey → Morgan → Alex → Robin → Toni. Reflects how a product actually gets built — from discovery to launch.
+- **Team summary table** added near the top (name, role, "ask them about") — gives first-time readers an immediate orientation before diving into profiles.
+- **"Who This Is For"** section added — explicitly names solo developers and small teams as the ICP. Previous README implied the audience but never stated it.
+- **"See the Difference"** before/after exchange added inside The Idea section — contrasts generic Claude output with Robin's specialist response to a test strategy prompt. Based on a real interaction.
+- **Badges** added at top: MIT license, Bash 3.2+, Works with Claude Code.
+- **Section renamed**: "The Team" → "Meet the Team".
+- **Outdated content fixed**: Usage section and project structure now reflect all 9 team members; Roadmap updated — v0.3 moved to current with proper description of what landed (4 new members + Required Interactive Behaviors).
+
+### Decisions Made
+- Chose Robin (not Akira) for the before/after example because test coverage is the most universally relatable pain point — everyone knows their test coverage is inadequate. Backend architecture requires more context to appreciate.
+- "Who This Is For" kept deliberately short — two paragraphs, no bullet list. Naming the audience without over-segmenting.
+- Before/after generalized from a real user prompt about dashboard test strategy. Kept realistic rather than contrived to preserve credibility.
+
+---
+
 ## [2026-03-08] Added bash test suite — 36 tests covering all CLI commands
 
 **Category:** `milestone`
