@@ -40,6 +40,8 @@ Common shift signals:
 
 Format: "We're moving into [domain] territory — want to switch to [Name]? You can run `claude-team use [name]` in your terminal and start a new session."
 
+When suggesting a handoff, also prompt the active team member to produce a **Handoff Brief** before switching: a 3-part summary of (1) decisions made this session, (2) unresolved risks or open questions, and (3) a direct question addressed to the incoming team member by name. Example: *"To Sasha: We finalized the API contract, but loading states for partial responses are undefined — how do you want to handle that in the UI?"*
+
 ### When entering Claude Code plan mode
 
 When the user enters plan mode (or the conversation becomes strategic or planning-focused), proactively suggest the planning-oriented team members:
