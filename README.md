@@ -252,6 +252,28 @@ Toni is strategic and audience-obsessed. They think about every decision through
 
 ---
 
+## Companion Skills
+
+The team works best with two companion skills installed alongside it. Each one fills a gap that comes up naturally when working with specialists across sessions.
+
+| Skill | What it does | Install |
+|---|---|---|
+| [claude-devlog-skill](https://github.com/d6veteran/claude-devlog-skill) | Maintains a `DEVLOG.md` in your repo — captures architectural decisions, milestones, and the reasoning behind them. Survives every session boundary. | `/devlog` |
+| [claude-roadmap-skill](https://github.com/d6veteran/claude-roadmap-skill) | Maintains a `ROADMAP.md` with a live priority view and a revision history. Every reprioritization is recorded with its rationale. | `/roadmap` |
+
+Both are invocable as slash commands (`/devlog`, `/roadmap`) once installed. They also auto-trigger on natural language: "log this", "update the roadmap", "we shipped X".
+
+```bash
+# Install both
+mkdir -p ~/.claude/skills/devlog ~/.claude/skills/roadmap
+curl -o ~/.claude/skills/devlog/SKILL.md \
+  https://raw.githubusercontent.com/d6veteran/claude-devlog-skill/main/SKILL.md
+curl -o ~/.claude/skills/roadmap/SKILL.md \
+  https://raw.githubusercontent.com/d6veteran/claude-roadmap-skill/main/SKILL.md
+```
+
+---
+
 ## Coordinator — Proactive Team Check-Ins
 
 The coordinator is an optional behavior layer that makes Claude actively manage two things: **who's on the task** and **how you're working**.
@@ -376,6 +398,13 @@ claude-team install-commands
 
 After activating a team member with `claude-team use`, **start a new Claude Code session** to apply the profile. To switch mid-session without restarting, use the slash commands (`/river`, `/akira`, etc.) directly in Claude Code.
 
+**Companion skill commands** (available after installing the companion skills above):
+
+```bash
+/devlog    # log a decision, milestone, or insight to DEVLOG.md
+/roadmap   # update or read the project ROADMAP.md
+```
+
 ---
 
 ## How It Works
@@ -452,7 +481,9 @@ claude-dev-team/
 │   ├── alex.md            # /alex slash command
 │   ├── robin.md           # /robin slash command
 │   ├── toni.md            # /toni slash command
-│   └── team.md            # /team slash command
+│   ├── team.md            # /team slash command
+│   ├── devlog.md          # /devlog — invoke devlog skill
+│   └── roadmap.md         # /roadmap — invoke roadmap skill
 ├── tests/
 │   └── run.sh             # Test suite (bash tests/run.sh)
 └── examples/
