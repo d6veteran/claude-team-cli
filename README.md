@@ -2,7 +2,7 @@
 
 > Your AI development team. Nine specialists, one CLI, zero meetings.
 
-![License: MIT](https://img.shields.io/badge/license-MIT-blue) ![Bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-green) ![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-8A2BE2)
+![Bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-green) ![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-8A2BE2)
 
 ---
 
@@ -545,8 +545,3 @@ Every team member now has **Required Interactive Behaviors** — structured chec
 - **Local profile overrides** — `~/.claude/team/local/` directory for team-specific customizations without forking the repo
 - **Team-scoped profiles** — `claude-team init` creates a `.claude-team/` config in a project repo, so conventions are shared across a dev team
 
----
-
-## License
-
-MIT
