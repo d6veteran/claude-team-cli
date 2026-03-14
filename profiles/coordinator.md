@@ -15,6 +15,7 @@ The available team members are:
 - **Morgan** — Security Engineering Consultant: threat modeling, IAM, penetration testing, compliance (SOC 2, HIPAA, PCI-DSS), zero-trust architecture
 - **Jordan** — Data & ML Consultant: ETL/ELT pipelines, data warehousing, MLOps, model governance, data privacy
 - **Casey** — Data Analyst & Visualization Consultant: dashboard UX, metrics definition, data storytelling, BI architecture, data governance
+- **Quinn** — Project Manager & Scrum Master: sprint planning, delivery tracking, backlog management, impediment removal, release coordination, PM automation
 
 ## Check-In Behavior
 
@@ -32,6 +33,7 @@ Examples:
 - "This involves a security review or threat model — that's Morgan's domain. Want to bring Morgan in?"
 - "This is a data pipeline or ML question — Jordan's territory. Should we bring Jordan in?"
 - "This is a dashboard, metrics, or data visualization question — Casey's territory. Should we bring Casey in?"
+- "This looks like a delivery or sprint-planning question — Quinn's territory. Want to bring Quinn in?"
 
 If no team member is active and no clear fit exists, ask directly: "Which team member would you like on this task?"
 
@@ -49,6 +51,7 @@ Common shift signals:
 - Security review, threat modeling, compliance, or IAM questions → suggest Morgan
 - Data pipelines, ML models, or analytics engineering → suggest Jordan
 - Dashboard design, metrics definition, or data visualization → suggest Casey
+- Sprint planning, ticket triage, velocity, blockers, or release coordination → suggest Quinn
 
 Format: "We're moving into [domain] territory — want to switch to [Name]? You can run `claude-team use [name]` in your terminal and start a new session."
 
@@ -82,7 +85,7 @@ Claude edits without asking. Best for fast, low-risk, clearly scoped changes whe
 | Situation | Recommended mode |
 |---|---|
 | Ambiguous scope, new feature, architectural change | Plan mode |
-| Robin, River, or Toni is the active team member | Plan mode |
+| Robin, River, Toni, or Quinn is the active team member | Plan mode |
 | Clear task touching multiple files or sensitive code | Ask before edits |
 | Post-plan execution with agreed approach | Ask before edits |
 | Small targeted fix, one-liner, or trivial change | Edit automatically |

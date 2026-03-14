@@ -1,6 +1,6 @@
 # claude-dev-team
 
-> Your AI development team. Nine specialists, one CLI, zero meetings.
+> Your AI development team. Ten specialists, one CLI, zero meetings.
 
 ![Bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-green) ![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-8A2BE2)
 
@@ -19,6 +19,7 @@
 | Alex | DevOps & Platform | CI/CD, Kubernetes, infrastructure, SRE |
 | Robin | QA & Testing | Test strategy, coverage, CI quality gates, security testing |
 | Toni | Product Marketing | Positioning, messaging, GTM, competitive intel |
+| Quinn | Project Manager & Scrum Master | Sprint planning, delivery tracking, backlog, release coordination |
 
 ---
 
@@ -38,7 +39,7 @@ That's what this is.
 
 `claude-dev-team` gives you a crew of named, specialized Claude personas — each one a formal expert consultant with deep domain knowledge, a distinct way of thinking, and enterprise-grade security instincts baked in. You pick who's on the task, and Claude shows up as that person.
 
-Need to define requirements? Call River. Design an API? Akira. Building a component that has to be accessible and secure? That's Sasha's world. Data pipelines or ML ops? Jordan. Dashboards and metrics? Casey. Security review or threat model? Morgan. Designing your deployment pipeline? Alex. Writing tests? Robin's got it. Planning a launch? Toni.
+Need to define requirements? Call River. Design an API? Akira. Building a component that has to be accessible and secure? That's Sasha's world. Data pipelines or ML ops? Jordan. Dashboards and metrics? Casey. Security review or threat model? Morgan. Designing your deployment pipeline? Alex. Writing tests? Robin's got it. Planning a launch? Toni. Making sure everything actually ships on time? Quinn.
 
 ### How it works in practice
 
@@ -236,6 +237,23 @@ Robin is methodical and exacting. They ask about failure modes before they ask a
 
 ---
 
+### Quinn — Project Manager & Scrum Master
+
+Quinn is action-oriented and delivery-focused. They translate plans into trackable work, flag scope creep the moment it appears, and push back hard on any task that lacks an owner, a deadline, or a clear definition of done. Quinn is not a blocker — Quinn removes blockers. They also bring a technical edge: building Jira and Linear automations, Claude-powered PM agents, and tracker systems that keep delivery visible without requiring manual updates.
+
+**Expertise:** Sprint planning and ceremonies (standup, review, retro, grooming), velocity tracking and burndown charts, capacity planning, ticket management (Jira, Linear, GitHub Issues, Azure DevOps), dependency mapping, risk registers, impediment removal, Definition of Done enforcement, Agile/Scrum/Kanban/SAFe, stakeholder status reporting, PM automation (Jira/Linear API integrations, webhook workflows, standup digests), agent and skill development for project management tooling, tracker design (capacity, risk, dependencies, release readiness).
+
+**Enterprise Security Focus:**
+- Requires explicit access control review on any board containing customer names, security vulnerabilities, pre-announcement features, or compensation data
+- Flags tickets referencing unannounced products or strategic decisions as requiring restricted visibility before creation
+- Enforces ticket-based audit trails for all sprint decisions and priority changes — Slack threads are not a record
+- Requires service accounts with scoped tokens for any PM automation — no personal credentials, no broad admin tokens
+- Flags bulk exports or API scrapes of project data that could move sensitive information outside approved systems
+
+> "Who owns this, when is it due, and what's blocking it?"
+
+---
+
 ### Toni — Product Marketing Manager
 
 Toni is strategic and audience-obsessed. They think about every decision through the lens of the customer and the market. Toni is at their best during planning sessions — shaping how features and products are framed before a single line of code is written. They push back when technical teams describe features in implementation terms rather than customer value terms.
@@ -295,7 +313,7 @@ Claude Code has three operating modes. The coordinator knows when each fits and 
 **Plan mode** — Claude reads and plans, touches nothing until you approve. The coordinator recommends this when:
 - Scope is ambiguous, large, or spans multiple files or systems
 - A new feature, refactor, or architectural change is involved
-- Robin, River, or Toni is the active team member
+- Robin, River, Toni, or Quinn is the active team member
 
 > *"I'd suggest plan mode here — new feature with open scope questions. Your options: **(1) Plan mode** ← recommended, (2) Ask before edits, (3) Edit automatically."*
 
@@ -370,6 +388,7 @@ claude-team show morgan
 claude-team show alex
 claude-team show robin
 claude-team show toni
+claude-team show quinn
 
 # Activate a team member
 claude-team use river     # River (Product Management)
@@ -381,6 +400,7 @@ claude-team use morgan    # Morgan (Security Engineering)
 claude-team use alex      # Alex (DevOps & Platform)
 claude-team use robin     # Robin (QA & Testing)
 claude-team use toni      # Toni (Product Marketing)
+claude-team use quinn     # Quinn (Project Management)
 
 # Check who's active + coordinator state
 claude-team status
@@ -470,6 +490,7 @@ claude-dev-team/
 │   ├── alex.md            # DevOps & Platform
 │   ├── robin.md           # QA & Testing specialist
 │   ├── toni.md            # Product Marketing Manager
+│   ├── quinn.md           # Project Manager & Scrum Master
 │   └── coordinator.md     # Proactive check-in behavior layer
 ├── commands/
 │   ├── river.md           # /river slash command
@@ -481,6 +502,7 @@ claude-dev-team/
 │   ├── alex.md            # /alex slash command
 │   ├── robin.md           # /robin slash command
 │   ├── toni.md            # /toni slash command
+│   ├── quinn.md           # /quinn slash command
 │   ├── team.md            # /team slash command
 │   ├── devlog.md          # /devlog — invoke devlog skill
 │   └── roadmap.md         # /roadmap — invoke roadmap skill
