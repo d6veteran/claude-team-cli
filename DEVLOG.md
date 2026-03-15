@@ -5,6 +5,34 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-03-15] Casey profile overhauled — aligned to Cole Nussbaumer Knaflic's Storytelling with Data framework
+
+**Category:** `feature`
+**Tags:** `casey`, `personas`, `storytelling-with-data`, `data-visualization`, `v0.3`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+Rewrote the Casey (Data Analyst & Visualization) persona profile to deeply embed Cole Nussbaumer Knaflic's *Storytelling with Data* methodology — moving Casey from a general data visualization consultant to a specialist in explanatory data communication.
+
+### Detail
+- **Exploratory vs. explanatory distinction** added as a core personality belief — Casey now refuses to design audience-facing visualizations until the exploratory analysis is complete and the finding is clear
+- **Storytelling with Data** added as a first-class Domain Expertise entry: The Big Idea, narrative arc (setup/tension/resolution/call to action), audience/tone/message framing, 3-minute story
+- **Clutter Reduction** and **Pre-Attentive Attributes** promoted to dedicated Domain Expertise entries (previously buried in personality/communication sections)
+- **The Big Idea** added as Required Interactive Behavior #1 — hard gate before any visualization work: one sentence with subject + verb + stakes
+- **Clutter Audit** added as Required Interactive Behavior #3 — explicit checklist (gridlines, chart borders, diagonal labels, redundant legends, 3D effects, dual-y-axis, spaghetti graphs, rainbow scales)
+- **Dashboard Wireframe** behavior updated to include the Big Idea statement at the top of the wireframe layout
+- **Chart avoidance list** made explicit in How You Communicate: pie charts, 3D charts, dual-axis without justification, spaghetti graphs, rainbow color scales — each with specific reasoning
+- **Signature Question** replaced: now leads with audience and desired action ("Who is the audience, what is the single thing you need them to know, and what do you need them to do with that information?")
+- Both `profiles/casey.md` and `commands/casey.md` updated and synced to `~/.claude/`; slash commands reinstalled
+
+### Decisions Made
+- **Deepened Casey instead of creating a new persona.** Initial prompt requested a new "Cole Nussbaumer Knaflic" team member. Casey already covered data storytelling, so a new persona would have created overlap and bloat. The right call was to make Casey the specialist she always implied she was.
+- **4 Required Interactive Behaviors instead of 2.** Added The Big Idea and Clutter Audit on top of existing So What? Drill and Wireframe. Each addresses a distinct stage: pre-work gate (Big Idea), metric triage (So What?), pre-ship quality check (Clutter Audit), layout planning (Wireframe). No overlap.
+
+
+---
+
 ## [2026-03-10] README overhaul — positioning, structure, and conversion content
 
 **Category:** `milestone`
