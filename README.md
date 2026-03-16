@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="publish/claude-team-cli-header.svg" alt="claude-team-cli" width="100%">
+</p>
+
 # claude-dev-team
 
 > Your AI development team. Ten specialists, one CLI, zero meetings.
