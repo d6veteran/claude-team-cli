@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # claude-team — Manage Claude Code team member personas
-# https://gitlab.com/wcurran/claude-dev-team
+# https://github.com/d6veteran/claude-team-cli
 
 set -euo pipefail
 
@@ -262,7 +262,7 @@ cmd_install_commands() {
   local commands_dst="$HOME/.claude/commands"
 
   [[ -d "$commands_src" ]] || die "Commands directory not found: $commands_src
-Make sure you are running this from the claude-dev-team repo."
+Make sure you are running this from the claude-team-cli repo."
 
   echo ""
   echo "Installing slash commands to $commands_dst ..."

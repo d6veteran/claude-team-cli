@@ -1,4 +1,4 @@
-# claude-dev-team — Development Log
+# claude-team-cli — Development Log
 
 A living record of architectural decisions, milestones, key insights, and strategic direction.
 Auto-maintained via Claude devlog skill. Entries are reverse-chronological.

@@ -2,7 +2,7 @@
   <img src="publish/claude-team-cli-header.svg" alt="claude-team-cli" width="100%">
 </p>
 
-# claude-dev-team
+# claude-team-cli
 
 > Your AI development team. Ten specialists, one CLI, zero meetings.
 
@@ -31,7 +31,7 @@
 
 Solo developers and small teams who are doing work that spans multiple domains — and don't have a roomful of specialists to pull into a conversation.
 
-If you're the only engineer on a project, or one of a small team where everyone wears multiple hats, `claude-dev-team` gives you access to expert-level thinking in domains outside your primary strength. Not generic AI help — a named specialist who thinks the way that domain actually thinks, asks the questions a senior practitioner would ask, and pushes back when something's off.
+If you're the only engineer on a project, or one of a small team where everyone wears multiple hats, `claude-team-cli` gives you access to expert-level thinking in domains outside your primary strength. Not generic AI help — a named specialist who thinks the way that domain actually thinks, asks the questions a senior practitioner would ask, and pushes back when something's off.
 
 ---
 
@@ -41,7 +41,7 @@ You know that feeling when you're deep in a coding session and you wish you had 
 
 That's what this is.
 
-`claude-dev-team` gives you a crew of named, specialized Claude personas — each one a formal expert consultant with deep domain knowledge, a distinct way of thinking, and enterprise-grade security instincts baked in. You pick who's on the task, and Claude shows up as that person.
+`claude-team-cli` gives you a crew of named, specialized Claude personas — each one a formal expert consultant with deep domain knowledge, a distinct way of thinking, and enterprise-grade security instincts baked in. You pick who's on the task, and Claude shows up as that person.
 
 Need to define requirements? Call River. Design an API? Akira. Building a component that has to be accessible and secure? That's Sasha's world. Data pipelines or ML ops? Jordan. Dashboards and metrics? Casey. Security review or threat model? Morgan. Designing your deployment pipeline? Alex. Writing tests? Robin's got it. Planning a launch? Toni. Making sure everything actually ships on time? Quinn.
 
@@ -357,8 +357,8 @@ claude-team status            # see coordinator state + active team member
 ### Quick install
 
 ```bash
-git clone https://github.com/d6veteran/claude-dev-team.git
-cd claude-dev-team
+git clone https://github.com/d6veteran/claude-team-cli.git
+cd claude-team-cli
 bash install.sh
 ```
 
@@ -478,7 +478,7 @@ See `examples/CLAUDE.md.example` for a reference of what an activated profile lo
 ## Project Structure
 
 ```
-claude-dev-team/
+claude-team-cli/
 ├── README.md
 ├── DEVLOG.md
 ├── install.sh

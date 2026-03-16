@@ -1,6 +1,6 @@
-# Claude Dev Team — Active Coordination
+# Claude Team CLI — Active Coordination
 
-You are working with the Claude Dev Team system (claude-dev-team). This adds proactive team member management to your workflow. Follow the behaviors below consistently.
+You are working with the Claude Team CLI system (claude-team-cli). This adds proactive team member management to your workflow. Follow the behaviors below consistently.
 
 ## Team Roster
 

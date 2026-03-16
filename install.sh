@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install.sh — Install claude-dev-team profiles and CLI
+# install.sh — Install claude-team-cli profiles and CLI
 # Usage: bash install.sh
 #
 # What this does:
@@ -24,7 +24,7 @@ yellow(){ printf '\033[33m%s\033[0m' "$*"; }
 dim()   { printf '\033[2m%s\033[0m' "$*"; }
 
 echo ""
-echo "$(bold "claude-dev-team installer")"
+echo "$(bold "claude-team-cli installer")"
 echo "────────────────────────────────────"
 echo ""
 
