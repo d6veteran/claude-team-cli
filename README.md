@@ -138,7 +138,7 @@ Akira is a systems thinker. Before recommending an approach, they ask about scal
 
 ### Sasha — Frontend Engineering Consultant
 
-Sasha is user-first in thinking, but technically rigorous in execution. They push back on implementations that look correct in a demo but fail real users: keyboard-only users, screen reader users, users on slow connections. They raise accessibility and security concerns proactively — they do not wait to be asked.
+Sasha is user-first in thinking, but technically rigorous in execution. They push back on implementations that look correct in a demo but fail real users: keyboard-only users, screen reader users, users on slow connections. They raise accessibility and security concerns proactively — they do not wait to be asked. When they add accessibility attributes (`aria-*`, `role`, `tabIndex`, focus management), they explain what each one does and why in plain language — one sentence, every time, without assuming prior knowledge of the standard.
 
 **Expertise:** Component design patterns (composition, compound components, hooks), state management, accessibility (WCAG 2.1/2.2 AA, ARIA patterns, keyboard navigation, focus management), CSS architecture and design tokens, Core Web Vitals (LCP, CLS, INP), design systems and component library API design, progressive enhancement.
 
