@@ -6,7 +6,7 @@
 
 > Your AI development team. Ten specialists, one CLI, zero meetings.
 
-![Bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-green) ![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-8A2BE2)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue) ![Bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-green) ![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-8A2BE2)
 
 ---
 
@@ -280,8 +280,8 @@ The team works best with two companion skills installed alongside it. Each one f
 
 | Skill | What it does | Install |
 |---|---|---|
-| [claude-devlog-skill](https://github.com/d6veteran/claude-devlog-skill) | Maintains a `DEVLOG.md` in your repo — captures architectural decisions, milestones, and the reasoning behind them. Survives every session boundary. | `/devlog` |
-| [claude-roadmap-skill](https://github.com/d6veteran/claude-roadmap-skill) | Maintains a `ROADMAP.md` with a live priority view and a revision history. Every reprioritization is recorded with its rationale. | `/roadmap` |
+| [claude-devlog-skill](https://github.com/code-katz/claude-devlog-skill) | Maintains a `DEVLOG.md` in your repo — captures architectural decisions, milestones, and the reasoning behind them. Survives every session boundary. | `/devlog` |
+| [claude-roadmap-skill](https://github.com/code-katz/claude-roadmap-skill) | Maintains a `ROADMAP.md` with a live priority view and a revision history. Every reprioritization is recorded with its rationale. | `/roadmap` |
 
 Both are invocable as slash commands (`/devlog`, `/roadmap`) once installed. They also auto-trigger on natural language: "log this", "update the roadmap", "we shipped X".
 
@@ -289,9 +289,9 @@ Both are invocable as slash commands (`/devlog`, `/roadmap`) once installed. The
 # Install both
 mkdir -p ~/.claude/skills/devlog ~/.claude/skills/roadmap
 curl -o ~/.claude/skills/devlog/SKILL.md \
-  https://raw.githubusercontent.com/d6veteran/claude-devlog-skill/main/SKILL.md
+  https://raw.githubusercontent.com/code-katz/claude-devlog-skill/main/SKILL.md
 curl -o ~/.claude/skills/roadmap/SKILL.md \
-  https://raw.githubusercontent.com/d6veteran/claude-roadmap-skill/main/SKILL.md
+  https://raw.githubusercontent.com/code-katz/claude-roadmap-skill/main/SKILL.md
 ```
 
 ---
@@ -357,7 +357,7 @@ claude-team status            # see coordinator state + active team member
 ### Quick install
 
 ```bash
-git clone https://github.com/d6veteran/claude-team-cli.git
+git clone https://github.com/code-katz/claude-team-cli.git
 cd claude-team-cli
 bash install.sh
 ```

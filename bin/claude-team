@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # claude-team — Manage Claude Code team member personas
-# https://github.com/d6veteran/claude-team-cli
+# https://github.com/code-katz/claude-team-cli
 
 set -euo pipefail
 
