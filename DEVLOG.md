@@ -5,6 +5,41 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-03-17] Codekatz brand identity established — 10 cat persona badges, logo, and visual identity system
+
+**Category:** `strategy`
+**Tags:** `codekatz`, `branding`, `visual-identity`, `badges`, `personas`, `gtm`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+Created the "Code Katz" brand identity for the claude-team-cli blog series and broader tool suite. Each of the 10 personas now has a unique cartoon cat character rendered as an employee badge. The codekatz.com domain was acquired, and a complete visual identity system was designed — from favicon to GitHub org avatar to Medium hero images.
+
+### Detail
+- All 10 persona cat badges created via Gemini and saved to `assets/badges/` — each cat has a distinct personality expressed through line art style (ear shape, eye expression, markings, props)
+- Badge format: "Code Katz Staff ID" employee badges with cat illustration, persona name, role title, employee ID, hire date, and paw logo mark
+- Art style: rust-orange (#d97757) line art on cream background, consistent across all 10 badges
+- Morgan's cat has a monocle and lock shield; Sasha's has a JS badge; each cat is visually distinct at thumbnail scale
+- Image prompts document (`posts/image-prompts.md`) fully rewritten for the cat approach — Phase 1 (base character design), Phase 2 (blog hero images per persona), Phase 3 (brand extensions)
+- Brand extension roadmap defined: GitHub org avatar (paw icon), README headers per repo, codekatz.com landing page, animated GIFs, sticker pack, "which cat are you?" quiz
+- Post file naming convention established and applied: `post-{NN}-{slug}.md` (1-2 word slugs)
+
+### Decisions Made
+- **Different cats per persona over one cat in different poses** — Originally planned a single cat mascot. Pivoted to 10 unique cats after seeing the reference style (Sudowoodo minimal cat faces). Different cats create instant visual recognition per post, "collect them all" engagement, and match the product better — these are specialists with distinct personalities, not modes of one tool.
+- **Cats over human figures** — Human illustrations created gender/diversity representation challenges. Cats eliminate the issue entirely while adding approachability and fun to a developer tools brand.
+- **codekatz.com as the umbrella brand** — The domain unifies the tool suite (team-cli, devlog, roadmap, publish-agent) under one memorable brand. Individual GitHub repos remain under `code-katz` org.
+- **Employee badge format** — Badges are more visually interesting and shareable than plain character portraits. They add worldbuilding detail (employee IDs, hire dates) that makes the personas feel like a real team.
+- **Paw icon as logo mark** — Extracted from the badge artwork. Simple enough for favicon (32px), distinctive enough for GitHub org avatar. Rust orange on charcoal as primary lockup.
+
+### Related
+- Badge assets: `assets/badges/*.png` (10 files)
+- Image prompts: `posts/image-prompts.md`
+- Style guide: `publish/style-guide.md`
+- Domain: codekatz.com
+- GitHub org: github.com/code-katz
+
+---
+
 ## [2026-03-15] Casey profile overhauled — aligned to Cole Nussbaumer Knaflic's Storytelling with Data framework
 
 **Category:** `feature`
