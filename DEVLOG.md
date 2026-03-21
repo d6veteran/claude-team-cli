@@ -5,6 +5,34 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-03-21] Added plans and todo companion skills to README, updated posts path to publish/posts/
+
+**Category:** `feature`
+**Tags:** `companion-skills`, `plans`, `todo`, `content-kit`, `readme`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+Updated README to document two new companion skills (claude-plans-skill and claude-todo-skill) alongside devlog and roadmap. Updated `.gitignore` to reflect the `posts/` → `publish/posts/` directory move matching the publish-agent convention.
+
+### Detail
+- Companion Skills table expanded from 2 to 4 entries: added claude-plans-skill (`/plans`) and claude-todo-skill (`/todo`)
+- Install block updated from "Install both" to "Install all four" with curl commands for all four skills
+- Usage section updated with `/plans` and `/todo` slash command examples
+- `.gitignore` updated: `posts/` → `publish/posts/` to match the publish-agent content kit convention
+- Remote origin updated from legacy gitlab-master.nvidia.com to github.com/code-katz/claude-team-cli
+
+### Decisions Made
+- **Four companion skills in one table** — Plans and todo are natural additions to the devlog/roadmap pair. All four serve the same purpose: persistent project context that survives session boundaries.
+- **publish/posts/ convention adopted** — Aligns with the publish-agent's decision to keep posts inside the content kit directory rather than at project root.
+
+### Related
+- claude-plans-skill: https://github.com/code-katz/claude-plans-skill
+- claude-todo-skill: https://github.com/code-katz/claude-todo-skill
+- publish-agent posts path change: [2026-03-21] entry in claude-publish-agent DEVLOG.md
+
+---
+
 ## [2026-03-17] Codekatz brand identity established — 10 cat persona badges, logo, and visual identity system
 
 **Category:** `strategy`

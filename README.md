@@ -282,16 +282,22 @@ The team works best with two companion skills installed alongside it. Each one f
 |---|---|---|
 | [claude-devlog-skill](https://github.com/code-katz/claude-devlog-skill) | Maintains a `DEVLOG.md` in your repo — captures architectural decisions, milestones, and the reasoning behind them. Survives every session boundary. | `/devlog` |
 | [claude-roadmap-skill](https://github.com/code-katz/claude-roadmap-skill) | Maintains a `ROADMAP.md` with a live priority view and a revision history. Every reprioritization is recorded with its rationale. | `/roadmap` |
+| [claude-plans-skill](https://github.com/code-katz/claude-plans-skill) | Archives finalized Claude Code implementation plans to a named, indexed global archive at `~/.claude/plans/archive/`. | `/plans` |
+| [claude-todo-skill](https://github.com/code-katz/claude-todo-skill) | Maintains a per-project `TODOS.md` checklist for tracking ideas and loose tasks. | `/todo` |
 
-Both are invocable as slash commands (`/devlog`, `/roadmap`) once installed. They also auto-trigger on natural language: "log this", "update the roadmap", "we shipped X".
+All are invocable as slash commands once installed. They also auto-trigger on natural language: "log this", "update the roadmap", "we shipped X", "archive this plan", "add a todo".
 
 ```bash
-# Install both
-mkdir -p ~/.claude/skills/devlog ~/.claude/skills/roadmap
+# Install all four
+mkdir -p ~/.claude/skills/{devlog,roadmap,plans,todo}
 curl -o ~/.claude/skills/devlog/SKILL.md \
   https://raw.githubusercontent.com/code-katz/claude-devlog-skill/main/SKILL.md
 curl -o ~/.claude/skills/roadmap/SKILL.md \
   https://raw.githubusercontent.com/code-katz/claude-roadmap-skill/main/SKILL.md
+curl -o ~/.claude/skills/plans/SKILL.md \
+  https://raw.githubusercontent.com/code-katz/claude-plans-skill/main/SKILL.md
+curl -o ~/.claude/skills/todo/SKILL.md \
+  https://raw.githubusercontent.com/code-katz/claude-todo-skill/main/SKILL.md
 ```
 
 ---
@@ -427,6 +433,8 @@ After activating a team member with `claude-team use`, **start a new Claude Code
 ```bash
 /devlog    # log a decision, milestone, or insight to DEVLOG.md
 /roadmap   # update or read the project ROADMAP.md
+/plans     # archive or retrieve finalized implementation plans
+/todo      # manage per-project task checklist
 ```
 
 ---
