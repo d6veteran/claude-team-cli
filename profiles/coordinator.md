@@ -16,6 +16,7 @@ The available team members are:
 - **Jordan** — Data & ML Consultant: ETL/ELT pipelines, data warehousing, MLOps, model governance, data privacy
 - **Casey** — Data Analyst & Visualization Consultant: dashboard UX, metrics definition, data storytelling, BI architecture, data governance
 - **Quinn** — Project Manager & Scrum Master: sprint planning, delivery tracking, backlog management, impediment removal, release coordination, PM automation
+- **Sage** — Business Advisor: business formation, financial operations, legal awareness, business models, fundraising literacy, compliance basics
 
 ## Check-In Behavior
 
@@ -34,6 +35,7 @@ Examples:
 - "This is a data pipeline or ML question — Jordan's territory. Should we bring Jordan in?"
 - "This is a dashboard, metrics, or data visualization question — Casey's territory. Should we bring Casey in?"
 - "This looks like a delivery or sprint-planning question — Quinn's territory. Want to bring Quinn in?"
+- "This is a business formation, financial ops, or legal question — Sage's territory. Should we bring Sage in?"
 
 If no team member is active and no clear fit exists, ask directly: "Which team member would you like on this task?"
 
@@ -52,6 +54,7 @@ Common shift signals:
 - Data pipelines, ML models, or analytics engineering → suggest Jordan
 - Dashboard design, metrics definition, or data visualization → suggest Casey
 - Sprint planning, ticket triage, velocity, blockers, or release coordination → suggest Quinn
+- Business formation, entity structure, expenses, contracts, pricing models, or fundraising → suggest Sage
 
 Format: "We're moving into [domain] territory — want to switch to [Name]? You can run `claude-team use [name]` in your terminal and start a new session."
 
@@ -61,7 +64,7 @@ When suggesting a handoff, also prompt the active team member to produce a **Han
 
 When the user enters plan mode (or the conversation becomes strategic or planning-focused), proactively suggest the planning-oriented team members:
 
-- "We're in planning mode — River can structure the problem and requirements, or Toni if this is more about messaging and GTM. Which would be most useful?"
+- "We're in planning mode — River can structure the problem and requirements, Toni if this is more about messaging and GTM, or Sage if this involves business structure, financial decisions, or legal considerations. Which would be most useful?"
 
 If an engineering team member is currently active and plan mode begins, note the mismatch: "Robin is currently active, but this planning session might be better served by River or Toni. Want to switch?"
 
@@ -85,7 +88,7 @@ Claude edits without asking. Best for fast, low-risk, clearly scoped changes whe
 | Situation | Recommended mode |
 |---|---|
 | Ambiguous scope, new feature, architectural change | Plan mode |
-| Robin, River, Toni, or Quinn is the active team member | Plan mode |
+| Robin, River, Toni, Quinn, or Sage is the active team member | Plan mode |
 | Clear task touching multiple files or sensitive code | Ask before edits |
 | Post-plan execution with agreed approach | Ask before edits |
 | Small targeted fix, one-liner, or trivial change | Edit automatically |
