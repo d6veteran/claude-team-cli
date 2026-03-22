@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="publish/claude-team-cli-header.svg" alt="claude-team-cli" width="100%">
+  <img src="publish/images/claude-team-cli-header.svg" alt="claude-team-cli" width="100%">
 </p>
 
 # claude-team-cli
 
-> Your AI development team. Ten specialists, one CLI, zero meetings.
+> Your AI development team. Eleven specialists, one CLI, zero meetings.
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue) ![Bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-green) ![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-8A2BE2)
 
@@ -24,6 +24,7 @@
 | Robin | QA & Testing | Test strategy, coverage, CI quality gates, security testing |
 | Toni | Product Marketing | Positioning, messaging, GTM, competitive intel |
 | Quinn | Project Manager & Scrum Master | Sprint planning, delivery tracking, backlog, release coordination |
+| Sage | Business Advisor | Business formation, financial ops, legal awareness, fundraising |
 
 ---
 
@@ -43,7 +44,7 @@ That's what this is.
 
 `claude-team-cli` gives you a crew of named, specialized Claude personas — each one a formal expert consultant with deep domain knowledge, a distinct way of thinking, and enterprise-grade security instincts baked in. You pick who's on the task, and Claude shows up as that person.
 
-Need to define requirements? Call River. Design an API? Akira. Building a component that has to be accessible and secure? That's Sasha's world. Data pipelines or ML ops? Jordan. Dashboards and metrics? Casey. Security review or threat model? Morgan. Designing your deployment pipeline? Alex. Writing tests? Robin's got it. Planning a launch? Toni. Making sure everything actually ships on time? Quinn.
+Need to define requirements? Call River. Design an API? Akira. Building a component that has to be accessible and secure? That's Sasha's world. Data pipelines or ML ops? Jordan. Dashboards and metrics? Casey. Security review or threat model? Morgan. Designing your deployment pipeline? Alex. Writing tests? Robin's got it. Planning a launch? Toni. Making sure everything actually ships on time? Quinn. Figuring out how to form your company, manage finances, or avoid legal landmines? That's Sage.
 
 ### How it works in practice
 
@@ -258,6 +259,22 @@ Quinn is action-oriented and delivery-focused. They translate plans into trackab
 
 ---
 
+### Sage — Business Advisor
+
+Sage is pragmatic, direct, and allergic to unnecessary complexity. They treat every business decision as a trade-off with a cost, a benefit, and a timing dimension. Sage has seen founders overspend on legal structures they did not need yet and founders who underspent on structures they desperately needed. They provide the 80% of context you need to walk into a meeting with a lawyer or CPA and ask the right questions. They are not an attorney, accountant, or financial advisor — they flag the professional-advice boundary clearly, with a specific reason every time.
+
+**Expertise:** Business formation (LLC, S-corp, C-corp, state strategy), early-stage financial operations (banking, bookkeeping, expense tracking), tax structure awareness, legal exposure assessment, IP and licensing, fundraising literacy (SAFEs, convertible notes, cap tables), business model design, insurance and risk, compliance basics (sales tax, contractor classification, privacy requirements).
+
+**Enterprise and Regulatory Considerations:**
+- Provides general business guidance — explicitly flags when a question requires a licensed attorney, CPA, or financial advisor
+- Treats revenue projections, cap tables, and pricing models as confidential business information
+- Names the general tax rule and flags when jurisdiction-specific guidance requires professional help
+- Identifies regulatory thresholds (securities law, employment law, sales tax nexus) and requires confirmation of professional guidance before proceeding
+
+> "What is this decision going to cost you — in money, time, and optionality — and is that trade-off worth it at this stage?"
+
+---
+
 ### Toni — Product Marketing Manager
 
 Toni is strategic and audience-obsessed. They think about every decision through the lens of the customer and the market. Toni is at their best during planning sessions — shaping how features and products are framed before a single line of code is written. They push back when technical teams describe features in implementation terms rather than customer value terms.
@@ -326,7 +343,7 @@ Claude Code has three operating modes. The coordinator knows when each fits and 
 **Plan mode** — Claude reads and plans, touches nothing until you approve. The coordinator recommends this when:
 - Scope is ambiguous, large, or spans multiple files or systems
 - A new feature, refactor, or architectural change is involved
-- Robin, River, Toni, or Quinn is the active team member
+- Robin, River, Toni, Quinn, or Sage is the active team member
 
 > *"I'd suggest plan mode here — new feature with open scope questions. Your options: **(1) Plan mode** ← recommended, (2) Ask before edits, (3) Edit automatically."*
 
@@ -402,6 +419,7 @@ claude-team show alex
 claude-team show robin
 claude-team show toni
 claude-team show quinn
+claude-team show sage
 
 # Activate a team member
 claude-team use river     # River (Product Management)
@@ -414,6 +432,7 @@ claude-team use alex      # Alex (DevOps & Platform)
 claude-team use robin     # Robin (QA & Testing)
 claude-team use toni      # Toni (Product Marketing)
 claude-team use quinn     # Quinn (Project Management)
+claude-team use sage      # Sage (Business Advisor)
 
 # Check who's active + coordinator state
 claude-team status
@@ -506,6 +525,7 @@ claude-team-cli/
 │   ├── robin.md           # QA & Testing specialist
 │   ├── toni.md            # Product Marketing Manager
 │   ├── quinn.md           # Project Manager & Scrum Master
+│   ├── sage.md            # Business Advisor
 │   └── coordinator.md     # Proactive check-in behavior layer
 ├── commands/
 │   ├── river.md           # /river slash command
@@ -518,6 +538,7 @@ claude-team-cli/
 │   ├── robin.md           # /robin slash command
 │   ├── toni.md            # /toni slash command
 │   ├── quinn.md           # /quinn slash command
+│   ├── sage.md            # /sage slash command
 │   ├── team.md            # /team slash command
 │   ├── devlog.md          # /devlog — invoke devlog skill
 │   └── roadmap.md         # /roadmap — invoke roadmap skill
@@ -561,7 +582,7 @@ Switch team members mid-session — no restart required. Each command injects th
 | `/robin` | Switch to Robin (QA & Testing) |
 | `/team` | Show current team status inline |
 
-### v0.3 (current)
+### v0.3
 
 **Four new specialists and Required Interactive Behaviors for all team members**
 
@@ -575,6 +596,16 @@ Expanded the team from five to nine, covering the full product development lifec
 | Alex | DevOps & Platform — CI/CD, Kubernetes, infrastructure, SRE |
 
 Every team member now has **Required Interactive Behaviors** — structured check-ins and challenge patterns that ensure each specialist actually behaves like a consultant, not just a persona. Robin mandates security regression tests for every vulnerability patch. River runs a "Problem Statement Drill" before any requirements are accepted. Casey won't let a metric onto a dashboard without a business decision to justify it. Toni forces a "So What?" challenge on every positioning claim.
+
+### v0.4 (current)
+
+**New specialist: Sage (Business Advisor)**
+
+Added Sage to cover the business operations gap — formation, financial infrastructure, legal awareness, business models, and fundraising literacy. Sage operates with a clear professional-advice boundary, flagging exactly when and why to consult a licensed attorney, CPA, or financial advisor. Expanded the team from ten to eleven specialists.
+
+| New Member | Domain |
+|---|---|
+| Sage | Business Advisor — formation, financial ops, legal awareness, fundraising, compliance |
 
 ### Later
 
