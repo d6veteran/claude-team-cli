@@ -274,22 +274,23 @@ Toni is strategic and audience-obsessed. They think about every decision through
 
 ---
 
-## Companion Skills
+## Works Well With
 
-The team works best with two companion skills installed alongside it. Each one fills a gap that comes up naturally when working with specialists across sessions.
+The team works best with these companion tools installed alongside it. Each one fills a gap that comes up naturally when working with specialists across sessions.
 
-| Skill | What it does | Install |
+| Project | What it does | Command |
 |---|---|---|
-| [claude-devlog-skill](https://github.com/code-katz/claude-devlog-skill) | Maintains a `DEVLOG.md` in your repo — captures architectural decisions, milestones, and the reasoning behind them. Survives every session boundary. | `/devlog` |
-| [claude-roadmap-skill](https://github.com/code-katz/claude-roadmap-skill) | Maintains a `ROADMAP.md` with a live priority view and a revision history. Every reprioritization is recorded with its rationale. | `/roadmap` |
-| [claude-plans-skill](https://github.com/code-katz/claude-plans-skill) | Archives finalized Claude Code implementation plans to a named, indexed global archive at `~/.claude/plans/archive/`. | `/plans` |
-| [claude-todo-skill](https://github.com/code-katz/claude-todo-skill) | Maintains a per-project `TODOS.md` checklist for tracking ideas and loose tasks. | `/todo` |
+| [claude-devlog-skill](https://github.com/code-katz/claude-devlog-skill) | Structured development changelog — captures what each specialist decided across sessions | `/devlog` |
+| [claude-roadmap-skill](https://github.com/code-katz/claude-roadmap-skill) | Living product roadmap with revision history — River's planning sessions feed directly into roadmap updates | `/roadmap` |
+| [claude-plans-skill](https://github.com/code-katz/claude-plans-skill) | Archives finalized implementation plans — plans capture the approach each specialist helped design | `/plans` |
+| [claude-todo-skill](https://github.com/code-katz/claude-todo-skill) | Lightweight task scratchpad — capture action items from any specialist session | `/todo` |
+| [claude-publish-agent](https://github.com/code-katz/claude-publish-agent) | Publish markdown to blogging platforms — Toni helps with positioning, then you publish it | `/publish` |
 
 All are invocable as slash commands once installed. They also auto-trigger on natural language: "log this", "update the roadmap", "we shipped X", "archive this plan", "add a todo".
 
 ```bash
-# Install all four
-mkdir -p ~/.claude/skills/{devlog,roadmap,plans,todo}
+# Install all five companion tools
+mkdir -p ~/.claude/skills/{devlog,roadmap,plans,todo,publish}
 curl -o ~/.claude/skills/devlog/SKILL.md \
   https://raw.githubusercontent.com/code-katz/claude-devlog-skill/main/SKILL.md
 curl -o ~/.claude/skills/roadmap/SKILL.md \
@@ -298,6 +299,8 @@ curl -o ~/.claude/skills/plans/SKILL.md \
   https://raw.githubusercontent.com/code-katz/claude-plans-skill/main/SKILL.md
 curl -o ~/.claude/skills/todo/SKILL.md \
   https://raw.githubusercontent.com/code-katz/claude-todo-skill/main/SKILL.md
+curl -o ~/.claude/skills/publish/SKILL.md \
+  https://raw.githubusercontent.com/code-katz/claude-publish-agent/main/SKILL.md
 ```
 
 ---
