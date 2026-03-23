@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="publish/images/claude-team-cli-header.svg" alt="claude-team-cli" width="100%">
+  <img src="publish/images/Team_dark_Banner.png" alt="claude-team-cli" width="100%">
+</p>
+
+<p align="center">
+  <img src="publish/images/Icon_Stacked.png" alt="Code Katz team icons" width="100%">
 </p>
 
 # claude-team-cli
