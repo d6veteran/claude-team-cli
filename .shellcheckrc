@@ -1,0 +1,16 @@
+# ShellCheck configuration for claude-team-cli
+# https://www.shellcheck.net/wiki/
+
+# Allow sourcing from paths determined at runtime
+# (e.g., sourcing profile files from ~/.claude/team/)
+disable=SC1090
+
+# Allow expressions in single-quoted strings (used in sed patterns)
+disable=SC2016
+
+# echo "$(fn ...)" is intentional — formatting functions (bold, dim) return
+# styled strings that need echo for output. Not a useless wrapper.
+disable=SC2005
+
+# sed is preferred over parameter expansion for readability in title parsing
+disable=SC2001

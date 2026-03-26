@@ -366,6 +366,10 @@ Claude Code has three operating modes. The coordinator knows when each fits and 
 
 If you override a suggestion for the current task, the coordinator won't repeat it immediately — but may recommend differently when you start something new.
 
+### Lint check on new projects
+
+When starting work on a new project or codebase, the coordinator verifies that a linter is configured for the project's stack. It checks for stack-appropriate lint config files (Ruff for Python, ESLint/Biome for JS/TS, SwiftLint for Swift, golangci-lint for Go, clippy for Rust, pre-commit for general use) and flags missing linters to the user before proceeding with any code changes.
+
 ### What the coordinator never does
 
 - Switch team members on its own
