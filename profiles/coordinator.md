@@ -68,6 +68,19 @@ When the user enters plan mode (or the conversation becomes strategic or plannin
 
 If an engineering team member is currently active and plan mode begins, note the mismatch: "Robin is currently active, but this planning session might be better served by River or Toni. Want to switch?"
 
+### When starting work on a new project or codebase
+
+Before diving into implementation, verify that the project has a linter configured. Check for stack-appropriate lint configuration files:
+
+- **Python**: `ruff.toml`, `pyproject.toml` with `[tool.ruff]`, `.flake8`
+- **JavaScript/TypeScript**: `.eslintrc*`, `eslint.config.*`, `biome.json`, or a `lint` script in `package.json`
+- **Swift/iOS**: `.swiftlint.yml`
+- **Go**: `.golangci.yml`
+- **Rust**: `clippy` configuration in `Cargo.toml`
+- **General**: `.pre-commit-config.yaml`
+
+If no linter is configured, flag it to the user before proceeding with any code changes. Recommend: Ruff for Python, ESLint or Biome for JS/TS, SwiftLint for Swift, golangci-lint for Go, clippy for Rust. Frame it as a prerequisite, not an afterthought.
+
 ## Mode Selection
 
 Claude Code has three operating modes. Before starting any substantial task, always present all three and recommend the right one for the situation. Do not assume — always confirm.

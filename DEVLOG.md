@@ -5,6 +5,38 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-03-26] Added lint requirement to all engineer personas and coordinator
+
+**Category:** `feature`
+**Tags:** `lint`, `static-analysis`, `engineer-personas`, `coordinator`, `code-quality`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+All six engineer personas (Akira, Robin, Sasha, Alex, Morgan, Jordan) and the coordinator now proactively check for linter configuration when encountering a new codebase, and flag it if missing with stack-specific recommendations.
+
+### Detail
+- Added a new bullet to `## Enterprise Security Focus` in each engineer persona, framed through their domain lens:
+  - **Akira**: security anti-patterns + code quality (bandit/S rules)
+  - **Robin**: pre-test quality gate (lint catches bugs before tests run)
+  - **Sasha**: code consistency + accessibility lint plugins (eslint-plugin-jsx-a11y)
+  - **Alex**: CI/CD pipeline quality gate (lint as blocking step before tests)
+  - **Morgan**: security baseline (cheapest static analysis for injection, secrets, unsafe calls)
+  - **Jordan**: pipeline reliability + SQLFluff for SQL-heavy projects
+- Added `### When starting work on a new project or codebase` subsection to coordinator's Check-In Behavior with full detection signal checklist
+- Detection covers: Python (Ruff), JS/TS (ESLint/Biome), Swift (SwiftLint), Go (golangci-lint), Rust (clippy), SQL (SQLFluff), and `.pre-commit-config.yaml`
+- Updated both `profiles/` and `commands/` directories (13 files total), reinstalled via `install.sh`
+
+### Decisions Made
+- **Bullet in Enterprise Security Focus, not a 4th Required Interactive Behavior** — Lint is a code quality/security concern, not a conversational behavior pattern. Adding it to Enterprise Security Focus preserves the consistent "3 behaviors + handoff" structure across all personas.
+- **Domain-specific framing per persona** — Each bullet uses the persona's lens (security, testing, CI/CD, etc.) rather than generic copy-paste, making the recommendation feel natural to each persona's voice.
+- **Coordinator gets a checklist, not a bullet** — The coordinator subsection uses a bulleted checklist of detection signals by stack, since it serves as a reference guide rather than a persona behavior.
+
+### Related
+- Plan file: `~/.claude/plans/shimmering-swimming-treehouse.md`
+
+---
+
 ## [2026-03-21] Added plans and todo companion skills to README, updated posts path to publish/posts/
 
 **Category:** `feature`
