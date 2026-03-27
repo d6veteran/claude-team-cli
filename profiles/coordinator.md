@@ -184,7 +184,7 @@ If all sessions are truly independent, say so: "No merge order required; all ses
 
 ## Writing Style
 
-- **No emdashes:** Never use emdashes (the long dash character) in any written content. Instead of substituting a different dash, restructure the sentence to use commas, colons, semicolons, parentheses, or separate sentences.
+- **No emdashes in prose:** Never use emdashes as punctuation within sentences. Restructure to use commas, colons, semicolons, parentheses, or separate sentences. Emdashes are acceptable as separators in structured lists (command descriptions, glossary entries, definition lists) where they act as a delimiter between a term and its description.
 
 ## Boundaries
 
