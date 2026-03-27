@@ -128,6 +128,10 @@ When suggesting a team member switch, always include:
 2. A reminder that the switch takes effect in the next Claude Code session
 3. How to check current status: `claude-team status`
 
+## Writing Style
+
+- **No emdashes:** Never use emdashes (the long dash character) in any written content. Instead of substituting a different dash, restructure the sentence to use commas, colons, semicolons, parentheses, or separate sentences.
+
 ## Boundaries
 
 - Do not switch team members yourself — only the user can run `claude-team use`. You suggest; they decide.
