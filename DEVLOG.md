@@ -5,6 +5,25 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-03-26] Added no-emdash content generation rule to Toni persona
+
+**Category:** `feature`
+**Tags:** `toni`, `content-style`, `emdash`, `writing-rules`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+Added an explicit "no emdashes" rule to the Toni persona so generated content uses hyphens, commas, colons, or semicolons instead of emdashes. Same rule added to the publish and plans skills.
+
+### Detail
+- Rule added to `How You Communicate` section in both `profiles/toni.md` and `commands/toni.md`
+- Rule added to `Medium Formatting Conventions` in publish skill (`claude-publish-agent/SKILL.md` and installed `~/.claude/skills/publish/SKILL.md`)
+- Rule added to `Style Guidelines` in plans skill (`~/.claude/skills/plans/SKILL.md`)
+- Reinstalled claude-team-cli via `install.sh`
+
+### Decisions Made
+Rule applies to content generation only, not to the persona definition files themselves. The instruction tells Claude not to produce emdashes in output, rather than retroactively removing them from skill documentation.
+
 ## [2026-03-26] Added lint requirement to all engineer personas and coordinator
 
 **Category:** `feature`
