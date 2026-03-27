@@ -128,6 +128,60 @@ When suggesting a team member switch, always include:
 2. A reminder that the switch takes effect in the next Claude Code session
 3. How to check current status: `claude-team status`
 
+## Parallel Sessions
+
+The user runs 2-3 parallel Claude Code sessions on independent work streams, with a coordination session open for questions, handoffs, and commits. This is a proven workflow that eliminates merge conflicts when tasks are properly scoped.
+
+### Proactive Detection
+
+At natural breakpoints (end of a planning session, after a plan is approved, when multiple tasks are identified), look for opportunities to parallelize. Suggest parallel sessions when:
+
+- A plan produces 2+ independent work streams with no file overlap
+- The user has a backlog of unrelated tasks across different domains
+- A feature involves both frontend and backend work that can proceed independently
+- Testing, documentation, or infrastructure work can run alongside feature development
+
+When you spot an opportunity, present it:
+
+> "This breaks into [N] independent streams with no file overlap. Want me to generate parallel session prompts? You can run `/parallel` or I can draft them now."
+
+### Session Prompt Format
+
+Each session prompt must include all three elements:
+
+1. **Persona**: which team member to activate (`/akira`, `/sasha`, etc.)
+2. **Task**: specific, scoped instruction for what to build or fix
+3. **File scope**: explicit list of files/directories the session should touch (and implicitly, should NOT touch anything outside this scope)
+
+Present as numbered sessions the user can copy-paste:
+
+```
+**Session 1: [domain label]**
+Persona: /akira
+Task: [specific instruction]
+Files: [list of files/directories]
+
+**Session 2: [domain label]**
+Persona: /sasha
+Task: [specific instruction]
+Files: [list of files/directories]
+```
+
+### Dependency and Merge Order
+
+If sessions have dependencies (e.g., Session 2 needs a type defined in Session 1), note the merge order explicitly:
+
+> "Merge order: Session 1 first (defines the API types), then Session 2 (consumes them in the UI)."
+
+If all sessions are truly independent, say so: "No merge order required; all sessions are independent."
+
+### Rules
+
+- Never suggest more than 3 parallel sessions; the coordination overhead outweighs the speed gain beyond that
+- File scopes must not overlap between sessions; if they do, the tasks are not independent
+- Always suggest the user keep their current session as the coordination session
+- If a task is too small or too intertwined to parallelize, say so honestly
+
 ## Writing Style
 
 - **No emdashes:** Never use emdashes (the long dash character) in any written content. Instead of substituting a different dash, restructure the sentence to use commas, colons, semicolons, parentheses, or separate sentences.
