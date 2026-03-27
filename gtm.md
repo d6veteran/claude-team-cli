@@ -39,26 +39,27 @@ Generic Claude gives you a checklist. A team member reframes the problem.
 
 ## 2. Content Series Plan
 
-### Series Arc: 13 Posts
+### All Content
 
-The series follows a single product — ACME Personal Jet Packs — through its entire development lifecycle. Each post features a different team member handling their domain. A reader who follows the full series watches a product come to life. The final post covers the companion tools that give the team persistent memory across sessions.
+The blog series follows a single product (ACME Personal Jet Packs) through its entire development lifecycle. Each post features a different team member handling their domain. Standalone thought pieces and LinkedIn-only posts round out the content calendar.
 
-| # | Title | Persona | ACME Scenario | Word Count |
-|---|---|---|---|---|
-| 0 | Meet My Claude Dev Team | Overview | N/A (uses Robin before/after) | 1200-1500 |
-| 1 | "What problem does a jet pack actually solve?" | River | Product discovery and requirements | 600-800 |
-| 2 | "Your telemetry API has a consistency problem" | Akira | Flight control + telemetry API design | 600-800 |
-| 3 | "A pilot at 200 feet can't squint at a tooltip" | Sasha | Pilot dashboard UI (safety-critical accessibility) | 600-800 |
-| 4 | "What happens when the upstream sensor schema changes?" | Jordan | Flight data pipeline + anomaly detection | 600-800 |
-| 5 | "What decision does this dashboard actually drive?" | Casey | Pilot safety KPI dashboard | 600-800 |
-| 6 | "What's the worst thing an attacker could do mid-flight?" | Morgan | Threat model for remote-controlled jet pack | 600-800 |
-| 7 | "If this OTA server dies, do pilots fall out of the sky?" | Alex | CI/CD for firmware over-the-air updates | 600-800 |
-| 8 | "The riskiest failures aren't code bugs — they're physics bugs" | Robin | Test strategy for flight controller edge cases | 600-800 |
-| 9 | "Who specifically buys a jet pack — and why now?" | Toni | Consumer launch positioning | 600-800 |
-| 10 | "Who owns this, when is it due, and what's blocking it?" | Quinn | Sprint planning for v1 launch | 600-800 |
-| 11 | "The tools that make the team remember" | Devlog + Roadmap | Persistent context across sessions | 800-1000 |
-
-| 12 | "AI Writes Code Fast. Lint Keeps It Honest." | Thought piece | Standalone — lint as organizational risk in AI-assisted dev | 1200-1500 |
+| # | Title | Type | Status |
+|---|---|---|---|
+| 0 | Meet My Claude Dev Team | Blog (Medium) | **Published** |
+| 1 | "What problem does a jet pack actually solve?" (River) | Blog (Medium) | **Published** |
+| 2 | "Your telemetry API has a consistency problem" (Akira) | Blog (Medium) | **Published** |
+| 3 | "A pilot at 200 feet can't squint at a tooltip" (Sasha) | Blog (Medium) | Written |
+| 4 | "What happens when the upstream sensor schema changes?" (Jordan) | Blog (Medium) | Written |
+| 5 | "What decision does this dashboard actually drive?" (Casey) | Blog (Medium) | Written |
+| 6 | "What's the worst thing an attacker could do mid-flight?" (Morgan) | Blog (Medium) | Written |
+| 7 | "If this OTA server dies, do pilots fall out of the sky?" (Alex) | Blog (Medium) | Written |
+| 8 | "The riskiest failures aren't code bugs..." (Robin) | Blog (Medium) | Written |
+| 9 | "Who specifically buys a jet pack..." (Toni) | Blog (Medium) | Written |
+| 10 | "Who owns this, when is it due, and what's blocking it?" (Quinn) | Blog (Medium) | Written |
+| 11 | "The tools that make the team remember" (Devlog + Roadmap) | Blog (Medium) | Written |
+| 12 | "AI Writes Code Fast. Lint Keeps It Honest." | Blog (Medium) | **Gist published** |
+| L1 | Post 0 LinkedIn teaser (Robin before/after) | LinkedIn | Written (Section 6) |
+| L2 | Slash commands overview | LinkedIn | Written (Section 7) |
 
 #### Standalone Thought Pieces (Post 12+)
 
