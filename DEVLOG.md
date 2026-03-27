@@ -5,6 +5,30 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-03-27] Added no-emdash writing rule and parallel session support
+
+**Category:** `feature`
+**Tags:** `coordinator`, `parallel-sessions`, `writing-style`, `toni`, `content-rules`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+Added a global "no emdashes" writing style rule to the coordinator and a new `/parallel` slash command for generating parallel session plans. Also rewrote the lint blog post to eliminate emdashes.
+
+### Detail
+- Added "Writing Style" section to `profiles/coordinator.md` with global no-emdash rule: restructure sentences instead of character-swapping
+- Added same rule to `profiles/toni.md` and `commands/toni.md` under "How You Communicate"
+- Added "Parallel Sessions" section to `profiles/coordinator.md` with proactive detection of parallelizable work streams
+- Created `commands/parallel.md` slash command that generates copy-paste session prompts with persona, task, and file scope
+- Rewrote `publish/posts/post-12-lint.md` using commas, colons, semicolons, and parentheses instead of emdashes; recreated the gist
+- Updated no-emdash rule in `claude-publish-agent/SKILL.md` and `~/.claude/skills/plans/SKILL.md`
+
+### Decisions Made
+- **No-emdash rule placement:** Put in the coordinator (not individual personas) so all team members inherit it globally. Toni has a duplicate because content writing is core to that persona's role.
+- **Rule wording:** "Restructure the sentence" not "swap the character." Early attempts at find-and-replace produced broken grammar. The rule must instruct Claude to rewrite, not substitute.
+- **Parallel session cap:** Maximum 3 sessions. Coordination overhead outweighs speed gains beyond that. Validated in prior session (2026-03-26) with 3 parallel streams completing independently with no merge conflicts.
+- **File scope as hard boundary:** Each parallel session prompt must include explicit file/directory scope with no overlap between sessions, which is the key to avoiding merge conflicts.
+
 ## [2026-03-26] Added no-emdash content generation rule to Toni persona
 
 **Category:** `feature`
