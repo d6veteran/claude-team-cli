@@ -324,12 +324,13 @@ The team works best with these companion tools installed alongside it. Each one 
 | [claude-plans-skill](https://github.com/code-katz/claude-plans-skill) | Archives finalized implementation plans that capture the approach each specialist helped design | `/plans` |
 | [claude-todo-skill](https://github.com/code-katz/claude-todo-skill) | Lightweight task scratchpad for capturing action items from any specialist session | `/todo` |
 | [claude-publish-agent](https://github.com/code-katz/claude-publish-agent) | Publish markdown to blogging platforms; Toni helps with positioning, then you publish it | `/publish` |
+| [claude-conductor](https://github.com/code-katz/claude-conductor) | Track and coordinate parallel Claude Code sessions; see who's doing what, who's blocked, and merge order | `/conductor` |
 
-All are invocable as slash commands once installed. They also auto-trigger on natural language: "log this", "update the roadmap", "we shipped X", "archive this plan", "add a todo".
+All are invocable as slash commands once installed. They also auto-trigger on natural language: "log this", "update the roadmap", "we shipped X", "archive this plan", "add a todo", "show sessions".
 
 ```bash
-# Install all five companion tools
-mkdir -p ~/.claude/skills/{devlog,roadmap,plans,todo,publish}
+# Install all six companion tools
+mkdir -p ~/.claude/skills/{devlog,roadmap,plans,todo,publish,conductor}
 curl -o ~/.claude/skills/devlog/SKILL.md \
   https://raw.githubusercontent.com/code-katz/claude-devlog-skill/main/SKILL.md
 curl -o ~/.claude/skills/roadmap/SKILL.md \
@@ -340,6 +341,8 @@ curl -o ~/.claude/skills/todo/SKILL.md \
   https://raw.githubusercontent.com/code-katz/claude-todo-skill/main/SKILL.md
 curl -o ~/.claude/skills/publish/SKILL.md \
   https://raw.githubusercontent.com/code-katz/claude-publish-agent/main/SKILL.md
+curl -o ~/.claude/skills/conductor/SKILL.md \
+  https://raw.githubusercontent.com/code-katz/claude-conductor/main/SKILL.md
 ```
 
 ---
@@ -516,11 +519,12 @@ After activating a team member with `claude-team use`, **start a new Claude Code
 **Companion skill commands** (available after installing the companion skills above):
 
 ```bash
-/parallel  # generate a parallel session plan with persona + task + file scope
-/devlog    # log a decision, milestone, or insight to DEVLOG.md
-/roadmap   # update or read the project ROADMAP.md
-/plans     # archive or retrieve finalized implementation plans
-/todo      # manage per-project task checklist
+/parallel   # generate a parallel session plan with persona + task + file scope
+/conductor  # track and coordinate parallel Claude Code sessions
+/devlog     # log a decision, milestone, or insight to DEVLOG.md
+/roadmap    # update or read the project ROADMAP.md
+/plans      # archive or retrieve finalized implementation plans
+/todo       # manage per-project task checklist
 ```
 
 ---
