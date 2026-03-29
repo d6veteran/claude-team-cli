@@ -10,10 +10,13 @@
 ## Product & Engineering
 
 ### Ready — Can Run in Parallel
-- [ ] Investigate Paperclip compatibility → **Akira** | determine integration requirements and any conflicts with current CLI architecture
-- [ ] Investigate archiving sections of DevLog as decisions are updated → **Akira** | hypothesis: trimming resolved decisions reduces context confusion for Claude in long-running projects
-- [ ] Investigate archiving plans as they are superseded → **Akira** | ask Claude directly whether stale plans in context cause drift or conflicting recommendations
+
 ### Completed
+- [x] Investigate archiving plans as they are superseded → **River + Akira** | added in-file Status markers, rejected status, active-plan review on archive, and direct-read guidance to claude-plans-skill SKILL.md
+
+### Completed
+- [x] Investigate archiving sections of DevLog as decisions are updated → **River + Akira** | implemented SUPERSEDED markers + DEVLOG-ARCHIVE.md in claude-devlog-skill SKILL.md
+- [x] Investigate Paperclip compatibility → **Akira** | result: created claude-conductor repo under Code Katz (github.com/code-katz/claude-conductor)
 - [x] Explore adding a UX/Design persona to the team roster → **River + Sasha** | added Kai (UX Design & Visual Art Consultant) as persona #12 with full profile, slash command, coordinator integration, README, and tests
 
 ## GTM — Audience Expansion

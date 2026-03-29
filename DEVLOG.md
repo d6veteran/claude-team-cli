@@ -5,6 +5,36 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-03-29] Added Kai (UX Design & Visual Art) as team member #12
+
+**Category:** `feature`
+**Tags:** `persona`, `kai`, `ux-design`, `image-generation`, `hugging-face-mcp`, `figma-mcp`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+Added Kai as the twelfth team member persona, covering UX design, visual art, mockup creation, and AI image generation. Clear boundary with Sasha: Kai designs the visual target, Sasha implements it in production code.
+
+### Detail
+- Created `profiles/kai.md` with full profile: Personality, Domain Expertise (10 items), Enterprise Security Focus (asset licensing, brand confidentiality, mockup data hygiene, prompt hygiene, font licensing), How You Communicate, Required Interactive Behaviors (Mockup-First, Mood Board Prompt, Device Frame Preview), Handoff Brief, Signature Question
+- Created `commands/kai.md` (lighter slash command version following Sasha's pattern)
+- Updated `profiles/coordinator.md`: roster, check-in examples, context shift signals
+- Updated `README.md`: team table (twelve specialists), narrative, Meet the Team section, usage examples, project structure, roadmap v0.5
+- Updated `install.sh`: quick start examples, slash command list
+- Updated `tests/run.sh`: Kai assertion in list test. 42/42 tests pass.
+- Kai knows Hugging Face MCP tools (FLUX.1-Krea-dev, Qwen-Image, FLUX.1-Kontext-Dev via `dynamic_space`) and Figma MCP tools (`get_design_context`, `use_figma`, `generate_diagram`, `get_screenshot`)
+- Mockup convention matches d20Mob: self-contained HTML, embedded CSS, inline SVG, dark theme (#0e0e12), 393x852 iPhone device frames
+
+### Decisions Made
+- **New persona over extending Sasha:** Sasha's domain is frontend engineering (components, accessibility, CSS architecture, state management). Kai's domain is visual design (wireframes, mockups, brand, image generation). Combining them would blur the lane-staying boundary that makes every persona effective.
+- **Kai over generic "Designer":** Named personas with specific expertise outperform generic roles. Kai has concrete tools (Hugging Face MCP, Figma MCP) and concrete outputs (device-frame HTML mockups, mood board prompts).
+- **Three interactive behaviors:** Mockup-First (produce artifact before abstract discussion), Mood Board Prompt (structured spec before visual work), Device Frame Preview (all mockups in device frames at target resolution). These are the behaviors that differentiate Kai from a generic "make it look good" assistant.
+
+### Related
+- d20Mob mockups reference: `d20mob/docs/mockups/` (18 HTML files that established the mockup convention)
+
+---
+
 ## [2026-03-27] Added no-emdash writing rule and parallel session support
 
 **Category:** `feature`
