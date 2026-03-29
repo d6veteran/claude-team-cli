@@ -57,7 +57,7 @@ The blog series follows a single product (ACME Personal Jet Packs) through its e
 | 9 | "Who specifically buys a jet pack..." (Toni) | Blog (Medium) | Written |
 | 10 | "Who owns this, when is it due, and what's blocking it?" (Quinn) | Blog (Medium) | Written |
 | 11 | "The tools that make the team remember" (Devlog + Roadmap) | Blog (Medium) | Written |
-| 12 | "AI Writes Code Fast. Lint Keeps It Honest." | Blog (Medium) | **Gist published** |
+| 12 | "AI Writes Code Fast. Lint Keeps It Honest." | Blog (Medium) | **Published** |
 | L1 | Post 0 LinkedIn teaser (Robin before/after) | LinkedIn | Written (Section 6) |
 | L2 | Slash commands overview | LinkedIn | Written (Section 7) |
 

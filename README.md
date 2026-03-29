@@ -8,7 +8,7 @@
 
 # claude-team-cli
 
-> Your AI development team. Eleven specialists, one CLI, zero meetings.
+> Your AI development team. Twelve specialists, one CLI, zero meetings.
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue) ![Bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-green) ![Works with Claude Code](https://img.shields.io/badge/works%20with-Claude%20Code-8A2BE2)
 
@@ -29,6 +29,7 @@
 | Toni | Product Marketing | Positioning, messaging, GTM, competitive intel |
 | Quinn | Project Manager & Scrum Master | Sprint planning, delivery tracking, backlog, release coordination |
 | Sage | Business Advisor | Business formation, financial ops, legal awareness, fundraising |
+| Kai | UX Design & Visual Art | Wireframes, mockups, visual design, image generation, brand identity |
 
 ---
 
@@ -48,7 +49,7 @@ That's what this is.
 
 `claude-team-cli` gives you a crew of named, specialized Claude personas, each one a formal expert consultant with deep domain knowledge, a distinct way of thinking, and enterprise-grade security instincts baked in. You pick who's on the task, and Claude shows up as that person.
 
-Need to define requirements? Call River. Design an API? Akira. Building a component that has to be accessible and secure? That's Sasha's world. Data pipelines or ML ops? Jordan. Dashboards and metrics? Casey. Security review or threat model? Morgan. Designing your deployment pipeline? Alex. Writing tests? Robin's got it. Planning a launch? Toni. Making sure everything actually ships on time? Quinn. Figuring out how to form your company, manage finances, or avoid legal landmines? That's Sage.
+Need to define requirements? Call River. Design an API? Akira. Building a component that has to be accessible and secure? That's Sasha's world. Need a mockup before anyone writes code? Kai will have a device-frame HTML wireframe in your browser before the discussion goes abstract. Data pipelines or ML ops? Jordan. Dashboards and metrics? Casey. Security review or threat model? Morgan. Designing your deployment pipeline? Alex. Writing tests? Robin's got it. Planning a launch? Toni. Making sure everything actually ships on time? Quinn. Figuring out how to form your company, manage finances, or avoid legal landmines? That's Sage.
 
 ### How it works in practice
 
@@ -279,6 +280,23 @@ Sage is pragmatic, direct, and allergic to unnecessary complexity. They treat ev
 
 ---
 
+### Kai: UX Design & Visual Art Consultant
+
+Kai is visual-first. They believe abstract UI discussions waste time and produce a concrete artifact (mockup, wireframe, mood board) before letting the team debate in the abstract. They are opinionated about visual hierarchy, color theory, and typography, and push back on requests that lack defined constraints. Kai knows the available AI image generation tools (Hugging Face MCP, Figma MCP) and treats prompt crafting like design iteration: each revision is intentional, not random.
+
+**Expertise:** HTML/CSS mockup creation (self-contained device-frame files), wireframing and information architecture, visual design and color theory, typography and type scale, layout composition and grid systems, device frame rendering (iPhone, tablet, desktop), image generation via FLUX.1 and Qwen-Image (Hugging Face MCP), Figma integration, brand identity, mood boards and style guides.
+
+**Enterprise Security Focus:**
+- Requires explicit documentation of which AI model produced each generated asset and whether its license permits commercial use
+- Treats mockups containing unreleased features or product strategy as confidential documents
+- Requires all mockup data to be synthetic; flags real API endpoints, credentials, or user data in design artifacts
+- Sanitizes image generation prompts before sending to external services; no proprietary business logic in API calls
+- Verifies font and asset licensing for commercial, open source, or internal use before recommending
+
+> "What does this screen look like at the size the user will actually see it, and does the visual hierarchy guide their eye to the right thing first?"
+
+---
+
 ### Toni: Product Marketing Manager
 
 Toni is strategic and audience-obsessed. They think about every decision through the lens of the customer and the market. Toni is at their best during planning sessions, shaping how features and products are framed before a single line of code is written. They push back when technical teams describe features in implementation terms rather than customer value terms.
@@ -463,6 +481,7 @@ claude-team show robin
 claude-team show toni
 claude-team show quinn
 claude-team show sage
+claude-team show kai
 
 # Activate a team member
 claude-team use river     # River (Product Management)
@@ -476,6 +495,7 @@ claude-team use robin     # Robin (QA & Testing)
 claude-team use toni      # Toni (Product Marketing)
 claude-team use quinn     # Quinn (Project Management)
 claude-team use sage      # Sage (Business Advisor)
+claude-team use kai       # Kai (UX Design & Visual Art)
 
 # Check who's active + coordinator state
 claude-team status
@@ -570,6 +590,7 @@ claude-team-cli/
 │   ├── toni.md            # Product Marketing Manager
 │   ├── quinn.md           # Project Manager & Scrum Master
 │   ├── sage.md            # Business Advisor
+│   ├── kai.md             # UX Design & Visual Art
 │   └── coordinator.md     # Proactive check-in behavior layer
 ├── commands/
 │   ├── river.md           # /river slash command
@@ -583,6 +604,7 @@ claude-team-cli/
 │   ├── toni.md            # /toni slash command
 │   ├── quinn.md           # /quinn slash command
 │   ├── sage.md            # /sage slash command
+│   ├── kai.md             # /kai slash command
 │   ├── team.md            # /team slash command
 │   ├── parallel.md        # /parallel slash command
 │   ├── devlog.md          # /devlog skill invocation
@@ -642,7 +664,7 @@ Expanded the team from five to nine, covering the full product development lifec
 
 Every team member now has **Required Interactive Behaviors**: structured check-ins and challenge patterns that ensure each specialist actually behaves like a consultant, not just a persona. Robin mandates security regression tests for every vulnerability patch. River runs a "Problem Statement Drill" before any requirements are accepted. Casey won't let a metric onto a dashboard without a business decision to justify it. Toni forces a "So What?" challenge on every positioning claim.
 
-### v0.4 (current)
+### v0.4
 
 **New specialist: Sage (Business Advisor)**
 
@@ -651,6 +673,16 @@ Added Sage to cover the business operations gap: formation, financial infrastruc
 | New Member | Domain |
 |---|---|
 | Sage | Business Advisor: formation, financial ops, legal awareness, fundraising, compliance |
+
+### v0.5 (current)
+
+**New specialist: Kai (UX Design & Visual Art Consultant)**
+
+Added Kai to own the visual design layer before code. Kai produces HTML/CSS mockups (self-contained device-frame files matching the d20Mob convention), wireframes, mood boards, and AI-generated images via Hugging Face MCP tools (FLUX.1, Qwen-Image). Clear boundary with Sasha: Kai designs the visual target, Sasha implements it in production code. Expanded the team from eleven to twelve specialists.
+
+| New Member | Domain |
+|---|---|
+| Kai | UX Design & Visual Art: wireframes, mockups, visual design, image generation, brand identity |
 
 ### Later
 

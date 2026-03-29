@@ -103,6 +103,7 @@ assert_contains     "shows Morgan"       "Morgan"      "$out"
 assert_contains     "shows Jordan"       "Jordan"      "$out"
 assert_contains     "shows Casey"        "Casey"       "$out"
 assert_contains     "shows Quinn"        "Quinn"       "$out"
+assert_contains     "shows Kai"          "Kai"         "$out"
 assert_not_contains "excludes Coordinator" "Coordinator" "$out"
 echo ""
 
