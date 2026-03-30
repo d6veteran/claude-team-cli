@@ -5,6 +5,34 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-03-29] Added Design System collaboration loop between Kai and Sasha
+
+**Category:** `feature`
+**Tags:** `sasha`, `kai`, `design-system`, `swiftui`, `ios`, `persona-collaboration`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+Added a "Design System Gate" behavior to Sasha and a "Design System Artifact" behavior to Kai, creating an automatic collaboration loop. Kai produces a structured design system specification before mockups; Sasha requires one before writing any SwiftUI UI code. Also added SwiftUI/iOS domain expertise to Sasha's profile.
+
+### Detail
+- Added `SwiftUI/iOS` bullet to Sasha's Domain Expertise: design tokens in Swift (enums, static constants), SwiftUI view modifiers, SF Symbols, system colors, safe area insets
+- Added "Design System Gate" as Required Interactive Behavior #4 in `profiles/sasha.md`: before any SwiftUI/iOS UI work, Sasha checks for a design system file. If missing, halts and asks the user to involve Kai. If present, references tokens exclusively and flags gaps rather than hardcoding values.
+- Added "Design System Artifact" as Required Interactive Behavior #4 in `profiles/kai.md`: before producing iOS/SwiftUI mockups, Kai delivers a design system spec (spacing scale, color tokens, corner radii, typography, opacity, shadows) in Swift-ready values (CGFloat, hex). Explicitly hands off to Sasha.
+- Updated Kai's Handoff Brief to include the design system artifact in every handoff to Sasha.
+- Copied both updated profiles to `~/.claude/team/` to sync installed versions.
+
+### Decisions Made
+- **Design system over mockups as primary fix:** The d20Mob SwiftUI app had solid code architecture (41 files, MVVM, good accessibility) but inconsistent visual quality due to ad hoc spacing/color/radius values. A design system enforces consistency systemically across all screens; mockups are screen-by-screen. Design system is the higher-leverage intervention.
+- **Collaboration loop over single-persona fix:** Rather than making Sasha generate her own design system (outside her lane) or making Kai aware of code (outside her lane), the loop preserves lane-staying: Kai designs the system, Sasha enforces it.
+- **Gate behavior (halt-and-flag) over soft suggestion:** Sasha halts work if no design system exists rather than proceeding with hardcoded values. Stronger enforcement prevents the drift that caused the original problem.
+
+### Related
+- d20Mob design system discussion that prompted this change (same session)
+- Kai persona addition: [2026-03-29] entry below
+
+---
+
 ## [2026-03-29] Added Kai (UX Design & Visual Art) as team member #12
 
 **Category:** `feature`
