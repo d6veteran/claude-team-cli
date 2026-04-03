@@ -253,6 +253,63 @@ if [[ ! -f "$_hook" ]]; then ok "branch guard remove deletes hook"; else fail "b
 rm -rf "$GUARD_REPO"
 echo ""
 
+# session commands
+echo "session commands"
+
+SESSION_REPO=$(mktemp -d)
+git init "$SESSION_REPO" >/dev/null 2>&1
+git -C "$SESSION_REPO" commit --allow-empty -m "init" >/dev/null 2>&1
+
+SESSION_WORKTREES="$TEST_HOME/.claude/worktrees"
+SESSION_INDEX="$TEST_HOME/.claude/branches/INDEX.md"
+
+# session status warns when no session marker
+out=$(cd "$SESSION_REPO" && CLAUDE_TEAM_PROFILES="$PROFILES_DIR" HOME="$TEST_HOME" "$CLI" session status 2>&1)
+assert_contains "session status warns when no session" "none\|No.*session\|not in\|Not in" "$out"
+
+# session start creates worktree directory
+(cd "$SESSION_REPO" && CLAUDE_TEAM_PROFILES="$PROFILES_DIR" HOME="$TEST_HOME" "$CLI" session start feat/session-test >/dev/null 2>&1)
+SESSION_WT="$SESSION_WORKTREES/$(basename "$SESSION_REPO")/feat-session-test"
+if [[ -d "$SESSION_WT" ]]; then ok "session start creates worktree directory"; else fail "session start creates worktree directory"; fi
+
+# session start writes .claude-session marker
+if [[ -f "$SESSION_WT/.claude-session" ]]; then ok "session start writes .claude-session marker"; else fail "session start writes .claude-session marker"; fi
+
+# .claude-session has correct fields
+assert_file_has "session marker has project field"     "$SESSION_WT/.claude-session" "^project="
+assert_file_has "session marker has branch field"      "$SESSION_WT/.claude-session" "^branch=feat/session-test"
+assert_file_has "session marker has worktree_path"     "$SESSION_WT/.claude-session" "^worktree_path="
+assert_file_has "session marker has started_at"        "$SESSION_WT/.claude-session" "^started_at="
+
+# session start registers branch in INDEX.md
+assert_file_has "session start writes INDEX.md entry"  "$SESSION_INDEX" "feat/session-test"
+assert_file_has "session start writes active status"   "$SESSION_INDEX" "active"
+
+# session start blocked if branch already active
+out=$(cd "$SESSION_REPO" && CLAUDE_TEAM_PROFILES="$PROFILES_DIR" HOME="$TEST_HOME" "$CLI" session start feat/session-test 2>&1)
+assert_contains "session start blocked if already active" "already\|active" "$out"
+
+# session status reads marker from worktree
+out=$(cd "$SESSION_WT" && CLAUDE_TEAM_PROFILES="$PROFILES_DIR" HOME="$TEST_HOME" "$CLI" session status 2>&1)
+assert_contains "session status shows branch from marker" "feat/session-test" "$out"
+
+# session list shows active session
+out=$(cd "$SESSION_REPO" && CLAUDE_TEAM_PROFILES="$PROFILES_DIR" HOME="$TEST_HOME" "$CLI" session list 2>&1)
+assert_contains "session list shows active branch" "feat/session-test" "$out"
+
+# session done marks merged in INDEX.md and removes worktree
+(cd "$SESSION_WT" && CLAUDE_TEAM_PROFILES="$PROFILES_DIR" HOME="$TEST_HOME" "$CLI" session done >/dev/null 2>&1)
+assert_file_has "session done marks merged in index"   "$SESSION_INDEX" "merged"
+if [[ ! -d "$SESSION_WT" ]]; then ok "session done removes worktree directory"; else fail "session done removes worktree directory"; fi
+
+# session start with --plan writes plan slug
+(cd "$SESSION_REPO" && CLAUDE_TEAM_PROFILES="$PROFILES_DIR" HOME="$TEST_HOME" "$CLI" session start feat/session-plan --plan my-plan-slug >/dev/null 2>&1)
+SESSION_WT2="$SESSION_WORKTREES/$(basename "$SESSION_REPO")/feat-session-plan"
+assert_file_has "session start --plan writes slug to marker" "$SESSION_WT2/.claude-session" "^plan_slug=my-plan-slug"
+
+rm -rf "$SESSION_REPO"
+echo ""
+
 # ─── Summary ─────────────────────────────────────────────────────────────────
 
 echo "────────────────────────────────"

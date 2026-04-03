@@ -18,6 +18,7 @@ COMMANDS_DST="$HOME/.claude/commands"
 BIN_SRC="$REPO_DIR/bin/claude-team"
 BIN_DST="$HOME/.local/bin/claude-team"
 BRANCHES_INDEX="$HOME/.claude/branches/INDEX.md"
+WORKTREES_ROOT="$HOME/.claude/worktrees"
 
 bold()  { printf '\033[1m%s\033[0m' "$*"; }
 green() { printf '\033[32m%s\033[0m' "$*"; }
@@ -68,7 +69,12 @@ else
 fi
 echo ""
 
-# 5. PATH check
+# 5. Create worktrees root
+mkdir -p "$WORKTREES_ROOT"
+echo "$(green "✓") Worktrees root ready: $(dim "$WORKTREES_ROOT")"
+echo ""
+
+# 6. PATH check
 if echo "$PATH" | grep -q "$HOME/.local/bin"; then
   echo "$(green "✓") ~/.local/bin is already on your PATH."
 else
@@ -83,7 +89,7 @@ else
   echo "    source ~/.zshrc   $(dim "# or ~/.bashrc")"
 fi
 
-# 6. Coordinator setup
+# 7. Coordinator setup
 echo ""
 echo "$(bold "Coordinator") — proactive team check-ins"
 echo ""
@@ -133,12 +139,18 @@ echo "  claude-team use kai                $(dim "# activate Kai (UX Design)")"
 echo "  claude-team coordinator on|off     $(dim "# toggle proactive check-ins")"
 echo "  claude-team reset                  $(dim "# return to default Claude")"
 echo ""
-echo "Branch hygiene:"
+echo "Parallel sessions (worktrees — preferred for multi-session work):"
+echo "  claude-team session start feat/<name>  $(dim "# create isolated worktree + branch")"
+echo "  claude-team session status             $(dim "# show current session details")"
+echo "  claude-team session done               $(dim "# close session, remove worktree")"
+echo "  claude-team session list               $(dim "# list all active sessions")"
+echo ""
+echo "Branch hygiene (single-session):"
 echo "  claude-team branch start feat/<name>   $(dim "# register a branch before working")"
 echo "  claude-team branch done                $(dim "# mark merged, print delete commands")"
 echo "  claude-team branch abandon             $(dim "# mark abandoned")"
 echo "  claude-team branch guard install       $(dim "# block accidental commits on main")"
 echo ""
 echo "Slash commands $(dim "(switch personas mid-session, no restart needed)"):"
-echo "  /robin   /akira   /sasha   /toni   /river   /sage   /kai   /team   /branch"
+echo "  /robin   /akira   /sasha   /toni   /river   /sage   /kai   /team   /branch   /session"
 echo ""

@@ -7,6 +7,7 @@ set -euo pipefail
 PROFILES_DIR="${CLAUDE_TEAM_PROFILES:-$HOME/.claude/team}"
 CLAUDE_MD="$HOME/.claude/CLAUDE.md"
 BRANCHES_INDEX="$HOME/.claude/branches/INDEX.md"
+WORKTREES_ROOT="$HOME/.claude/worktrees"
 MARKER_START="<!-- CLAUDE-TEAM:START -->"
 MARKER_END="<!-- CLAUDE-TEAM:END -->"
 COORD_START="<!-- CLAUDE-COORDINATOR:START -->"
@@ -502,6 +503,213 @@ cmd_branch() {
   esac
 }
 
+# ─── Session helpers ──────────────────────────────────────────────────────────
+
+ensure_worktrees_root() {
+  mkdir -p "$WORKTREES_ROOT"
+}
+
+sanitize_branch_for_path() {
+  echo "$1" | tr '/' '-'
+}
+
+get_worktree_path() {
+  local project="$1" branch="$2"
+  echo "$WORKTREES_ROOT/$project/$(sanitize_branch_for_path "$branch")"
+}
+
+read_session_marker() {
+  local dir
+  dir=$(git rev-parse --show-toplevel 2>/dev/null) || true
+  dir="${dir:-$PWD}"
+  if [[ -f "$dir/.claude-session" ]]; then
+    cat "$dir/.claude-session"
+  else
+    echo ""
+  fi
+}
+
+# ─── Session commands ──────────────────────────────────────────────────────────
+
+cmd_session_start() {
+  [[ $# -ge 1 ]] || die "Usage: claude-team session start <branch-name> [--plan <slug>]"
+  local branch_name="$1"
+  shift
+  local plan_slug=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --plan)
+        [[ $# -ge 2 ]] || die "--plan requires a value"
+        plan_slug="$2"
+        shift 2
+        ;;
+      *) die "Unknown option: $1" ;;
+    esac
+  done
+
+  local repo_root project worktree_path
+  repo_root=$(git rev-parse --show-toplevel 2>/dev/null) \
+    || die "Not in a git repo. Run this from your project's root directory."
+  project=$(basename "$repo_root")
+  worktree_path=$(get_worktree_path "$project" "$branch_name")
+
+  # Block if this branch is already an active session
+  local existing
+  existing=$(get_active_branch "$project")
+  if [[ -n "$existing" && "$existing" == "$branch_name" ]]; then
+    die "Branch '$(bold "$branch_name")' already has an active session.
+Run: claude-team session status"
+  fi
+
+  ensure_worktrees_root
+  mkdir -p "$(dirname "$worktree_path")"
+
+  # Create worktree: track existing local branch, or create new one from main
+  if git -C "$repo_root" show-ref --quiet "refs/heads/$branch_name"; then
+    git -C "$repo_root" worktree add "$worktree_path" "$branch_name" \
+      || die "Failed to create worktree for existing branch '$branch_name'"
+  else
+    git -C "$repo_root" worktree add -b "$branch_name" "$worktree_path" main \
+      || die "Failed to create worktree and branch '$branch_name'"
+  fi
+
+  # Write .claude-session marker inside the worktree
+  local started_at
+  started_at=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
+  printf 'project=%s\nbranch=%s\nworktree_path=%s\nplan_slug=%s\nstarted_at=%s\n' \
+    "$project" "$branch_name" "$worktree_path" "$plan_slug" "$started_at" \
+    > "$worktree_path/.claude-session"
+
+  # Register in INDEX.md
+  ensure_branches_index
+  local today
+  today=$(date '+%Y-%m-%d')
+  printf '| %s | %s | %s | %s | active | worktree |\n' \
+    "$today" "$project" "$branch_name" "$plan_slug" >> "$BRANCHES_INDEX"
+
+  echo ""
+  echo "$(green "✓") Session started"
+  echo "  Branch:   $(bold "$branch_name")"
+  echo "  Worktree: $worktree_path"
+  echo ""
+  echo "  Open in a new Claude Code window:"
+  echo "  $(dim "code \"$worktree_path\"")"
+  echo ""
+}
+
+cmd_session_status() {
+  local marker
+  marker=$(read_session_marker)
+  echo ""
+  if [[ -n "$marker" ]]; then
+    echo "$(bold "Active session")"
+    while IFS='=' read -r key val; do
+      [[ -n "$key" ]] && printf '  %-16s %s\n' "$key" "$val"
+    done <<< "$marker"
+  else
+    echo "$(bold "Active session:") $(red "none")"
+    echo "  $(dim "Not in a session worktree.")"
+    echo "  $(dim "Start one: claude-team session start <branch>")"
+  fi
+  echo ""
+}
+
+cmd_session_done() {
+  local worktree_path
+  worktree_path=$(git rev-parse --show-toplevel 2>/dev/null) \
+    || die "Not in a git repo."
+
+  [[ -f "$worktree_path/.claude-session" ]] \
+    || die "No .claude-session marker found.
+Run this from inside a session worktree, or use 'claude-team branch done' for non-worktree branches."
+
+  local project branch
+  project=$(grep '^project=' "$worktree_path/.claude-session" | cut -d= -f2)
+  branch=$(grep '^branch=' "$worktree_path/.claude-session" | cut -d= -f2)
+
+  # Warn on uncommitted changes
+  if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
+     ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+    echo "$(red "⚠") Uncommitted changes in worktree." >&2
+    echo "  Commit or stash before closing the session." >&2
+    exit 1
+  fi
+
+  # Find main repo root (git-common-dir points to main .git)
+  local git_common_dir repo_root
+  git_common_dir=$(git -C "$worktree_path" rev-parse --git-common-dir 2>/dev/null)
+  repo_root=$(dirname "$git_common_dir")
+
+  # Mark merged in INDEX.md
+  local tmp
+  tmp=$(mktemp)
+  awk -F'|' -v proj="$project" -v br="$branch" '
+    $3 ~ " " proj " " && $4 ~ " " br " " && $6 ~ / active / {
+      d=$2; sub(/^[[:space:]]+/,"",d); sub(/[[:space:]]+$/,"",d)
+      p=$3; sub(/^[[:space:]]+/,"",p); sub(/[[:space:]]+$/,"",p)
+      b=$4; sub(/^[[:space:]]+/,"",b); sub(/[[:space:]]+$/,"",b)
+      s=$5; sub(/^[[:space:]]+/,"",s); sub(/[[:space:]]+$/,"",s)
+      printf "| %s | %s | %s | %s | merged | worktree |\n", d, p, b, s
+      next
+    }
+    { print }
+  ' "$BRANCHES_INDEX" > "$tmp" && mv "$tmp" "$BRANCHES_INDEX"
+
+  # Remove worktree (must be called from outside the worktree)
+  git -C "$repo_root" worktree remove "$worktree_path" 2>/dev/null \
+    || git -C "$repo_root" worktree remove "$worktree_path" --force
+
+  echo ""
+  echo "$(green "✓") Session closed: $(bold "$branch")"
+  echo "  $(dim "Worktree removed: $worktree_path")"
+  echo ""
+  echo "  Ready to tag this release?"
+  echo "  $(dim "  git tag <descriptive-name> && git push origin <tag>")"
+  echo ""
+}
+
+cmd_session_list() {
+  ensure_worktrees_root
+  echo ""
+  echo "$(bold "Active sessions")"
+  echo ""
+  if [[ ! -f "$BRANCHES_INDEX" ]]; then
+    echo "  $(dim "(none)")"
+    echo ""
+    return
+  fi
+  local found=0
+  while IFS= read -r line; do
+    if echo "$line" | grep -q '| active |'; then
+      local project branch worktree_path
+      project=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/,"",$3); print $3}')
+      branch=$(echo "$line" | awk -F'|' '{gsub(/^[[:space:]]+|[[:space:]]+$/,"",$4); print $4}')
+      worktree_path=$(get_worktree_path "$project" "$branch")
+      if [[ -d "$worktree_path" ]]; then
+        printf '  %-25s  %-40s  %s\n' "$(bold "$project")" "$branch" "$(dim "$worktree_path")"
+      else
+        printf '  %-25s  %-40s  %s\n' "$(bold "$project")" "$branch" "$(dim "(no worktree)")"
+      fi
+      found=1
+    fi
+  done < "$BRANCHES_INDEX"
+  [[ $found -eq 0 ]] && echo "  $(dim "(none)")"
+  echo ""
+}
+
+cmd_session() {
+  local subcmd="${1:-}"
+  [[ -n "$subcmd" ]] || die "Usage: claude-team session <start|status|done|list>"
+  shift
+  case "$subcmd" in
+    start)  cmd_session_start "$@" ;;
+    status) cmd_session_status ;;
+    done)   cmd_session_done ;;
+    list)   cmd_session_list ;;
+    *) die "Unknown session subcommand: $subcmd. Use start|status|done|list." ;;
+  esac
+}
+
 cmd_help() {
   echo ""
   echo "$(bold "claude-team") — Manage Claude Code team member personas"
@@ -515,7 +723,15 @@ cmd_help() {
   echo "  claude-team coordinator on|off      Enable/disable proactive team check-ins"
   echo "  claude-team install-commands        Install slash commands to ~/.claude/commands/"
   echo ""
-  echo "$(bold "Branch hygiene:")"
+  echo "$(bold "Parallel sessions (worktrees):")"
+  echo "  claude-team session start <name>   Create a worktree + branch for an isolated session"
+  echo "  claude-team session start <name> --plan <slug>"
+  echo "                                     Link the session to an archived plan"
+  echo "  claude-team session status         Show current session details (branch, worktree path)"
+  echo "  claude-team session done           Close session: mark merged, remove worktree"
+  echo "  claude-team session list           List all active sessions across projects"
+  echo ""
+  echo "$(bold "Branch hygiene (single-session):")"
   echo "  claude-team branch start <name>    Register a branch for the current project"
   echo "  claude-team branch start <name> --plan <slug>"
   echo "                                     Register a branch linked to an archived plan"
@@ -552,6 +768,7 @@ case "${1:-help}" in
   coordinator)      cmd_coordinator "${2:-}" ;;
   install-commands) cmd_install_commands ;;
   branch)           shift; cmd_branch "$@" ;;
+  session)          shift; cmd_session "$@" ;;
   help|--help|-h)   cmd_help ;;
   *) die "Unknown command: $1. Run 'claude-team help' for usage." ;;
 esac
