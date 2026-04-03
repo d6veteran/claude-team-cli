@@ -192,6 +192,67 @@ assert_exits_nonzero "use without name exits nonzero" "$CLI" use
 assert_exits_nonzero "show without name exits nonzero" "$CLI" show
 echo ""
 
+# branch commands
+echo "branch commands"
+
+BRANCHES_INDEX="$TEST_HOME/.claude/branches/INDEX.md"
+
+# status warns when no index exists
+out=$(run_cmd branch status 2>&1)
+assert_contains "branch status warns when no active branch" "none\|No branch\|no active\|No active" "$out"
+
+# start registers a branch
+run_cmd branch start feat/test-branch >/dev/null
+assert_file_has "branch start creates index"            "$BRANCHES_INDEX" "Branch Index"
+assert_file_has "branch start writes branch name"       "$BRANCHES_INDEX" "feat/test-branch"
+assert_file_has "branch start writes project name"      "$BRANCHES_INDEX" "claude-team-cli"
+assert_file_has "branch start writes active status"     "$BRANCHES_INDEX" "active"
+
+# status shows active branch
+out=$(run_cmd branch status)
+assert_contains "branch status shows active branch"     "feat/test-branch" "$out"
+
+# start blocked when active already exists
+assert_exits_nonzero "branch start blocked when active exists" "$CLI" branch start feat/duplicate
+
+# done marks merged
+out=$(run_cmd branch done 2>&1)
+assert_contains "branch done output mentions merged"    "merged" "$out"
+assert_file_has "branch done updates status in index"   "$BRANCHES_INDEX" "merged"
+
+# status after done shows none
+out=$(run_cmd branch status 2>&1)
+assert_contains "branch status after done shows none"   "none\|No branch\|no active\|No active" "$out"
+
+# start with --plan links a plan slug
+run_cmd branch start feat/with-plan --plan some-plan-slug >/dev/null
+assert_file_has "branch start --plan writes plan slug"  "$BRANCHES_INDEX" "some-plan-slug"
+
+# abandon marks abandoned
+out=$(run_cmd branch abandon 2>&1)
+assert_contains "branch abandon output mentions abandoned" "abandoned" "$out"
+assert_file_has "branch abandon updates status in index"  "$BRANCHES_INDEX" "abandoned"
+
+# list shows full table
+run_cmd branch start feat/listable >/dev/null
+out=$(run_cmd branch list 2>&1)
+assert_contains "branch list shows header"              "Branch Index" "$out"
+assert_contains "branch list shows branch entry"        "feat/listable" "$out"
+
+# guard install and remove
+GUARD_REPO=$(mktemp -d)
+git init "$GUARD_REPO" >/dev/null 2>&1
+mkdir -p "$GUARD_REPO/.git/hooks"
+_hook="$GUARD_REPO/.git/hooks/pre-commit"
+(cd "$GUARD_REPO" && CLAUDE_TEAM_PROFILES="$PROFILES_DIR" HOME="$TEST_HOME" "$CLI" branch guard install >/dev/null 2>&1)
+if [[ -f "$_hook" ]]; then ok "branch guard install creates hook"; else fail "branch guard install creates hook"; fi
+if [[ -x "$_hook" ]]; then ok "branch guard hook is executable"; else fail "branch guard hook is executable"; fi
+if grep -q "claude-team" "$_hook" 2>/dev/null; then ok "branch guard hook has claude-team marker"; else fail "branch guard hook has claude-team marker"; fi
+(cd "$GUARD_REPO" && CLAUDE_TEAM_PROFILES="$PROFILES_DIR" HOME="$TEST_HOME" "$CLI" branch guard remove >/dev/null 2>&1)
+if [[ ! -f "$_hook" ]]; then ok "branch guard remove deletes hook"; else fail "branch guard remove deletes hook"; fi
+rm -rf "$GUARD_REPO"
+echo ""
+
 # ─── Summary ─────────────────────────────────────────────────────────────────
 
 echo "────────────────────────────────"

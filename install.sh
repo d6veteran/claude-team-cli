@@ -17,6 +17,7 @@ COMMANDS_SRC="$REPO_DIR/commands"
 COMMANDS_DST="$HOME/.claude/commands"
 BIN_SRC="$REPO_DIR/bin/claude-team"
 BIN_DST="$HOME/.local/bin/claude-team"
+BRANCHES_INDEX="$HOME/.claude/branches/INDEX.md"
 
 bold()  { printf '\033[1m%s\033[0m' "$*"; }
 green() { printf '\033[32m%s\033[0m' "$*"; }
@@ -56,7 +57,18 @@ chmod +x "$BIN_SRC"
 echo "$(green "✓") CLI symlinked: $(dim "$BIN_DST → $BIN_SRC")"
 echo ""
 
-# 4. PATH check
+# 4. Create branch index if it doesn't exist
+if [[ ! -f "$BRANCHES_INDEX" ]]; then
+  mkdir -p "$(dirname "$BRANCHES_INDEX")"
+  printf '# Branch Index\n\n| Date | Project | Branch | Plan Slug | Status | Notes |\n|---|---|---|---|---|---|\n' \
+    > "$BRANCHES_INDEX"
+  echo "$(green "✓") Branch index created: $(dim "$BRANCHES_INDEX")"
+else
+  echo "$(green "✓") Branch index already exists: $(dim "$BRANCHES_INDEX")"
+fi
+echo ""
+
+# 5. PATH check
 if echo "$PATH" | grep -q "$HOME/.local/bin"; then
   echo "$(green "✓") ~/.local/bin is already on your PATH."
 else
@@ -71,7 +83,7 @@ else
   echo "    source ~/.zshrc   $(dim "# or ~/.bashrc")"
 fi
 
-# 5. Coordinator setup
+# 6. Coordinator setup
 echo ""
 echo "$(bold "Coordinator") — proactive team check-ins"
 echo ""
@@ -121,6 +133,12 @@ echo "  claude-team use kai                $(dim "# activate Kai (UX Design)")"
 echo "  claude-team coordinator on|off     $(dim "# toggle proactive check-ins")"
 echo "  claude-team reset                  $(dim "# return to default Claude")"
 echo ""
+echo "Branch hygiene:"
+echo "  claude-team branch start feat/<name>   $(dim "# register a branch before working")"
+echo "  claude-team branch done                $(dim "# mark merged, print delete commands")"
+echo "  claude-team branch abandon             $(dim "# mark abandoned")"
+echo "  claude-team branch guard install       $(dim "# block accidental commits on main")"
+echo ""
 echo "Slash commands $(dim "(switch personas mid-session, no restart needed)"):"
-echo "  /robin   /akira   /sasha   /toni   /river   /sage   /kai   /team"
+echo "  /robin   /akira   /sasha   /toni   /river   /sage   /kai   /team   /branch"
 echo ""
