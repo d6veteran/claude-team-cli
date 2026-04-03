@@ -33,6 +33,14 @@
 
 ---
 
+**What's New**
+
+**[Parallel sessions](#coordinator-proactive-team-check-ins)** — run independent work streams simultaneously, each with a dedicated team member, scoped task, and explicit file boundary. No merge conflicts. No context bleed.
+
+**[Branch hygiene](#branch-hygiene-one-branch-per-session)** — register a branch before writing code, close it after merging, and never lose track of what Claude is building across sessions or projects.
+
+---
+
 ## Who This Is For
 
 Solo developers and small teams doing work that spans multiple domains, without a roomful of specialists to pull into a conversation.
@@ -442,6 +450,56 @@ claude-team status            # see coordinator state + active team member
 
 ---
 
+## Branch Hygiene: One Branch Per Session
+
+Without structure, work accumulates on `main`. Sessions start without knowing what was in progress. Branches get abandoned. Features land on the wrong base.
+
+Branch hygiene enforces a simple contract: register a branch before writing code, work on it for the session, and close it explicitly when the work is done. The coordinator reads this state at session start, so Claude always knows what it is building and where it belongs.
+
+### The workflow
+
+```bash
+# Before writing anything, register your branch
+claude-team branch start feat/user-auth
+
+# Link it to an archived plan for full traceability
+claude-team branch start feat/user-auth --plan my-plan-slug
+
+# Check what's active at any point
+claude-team branch status
+# Active branch: feat/user-auth (my-project)
+# Linked plan: my-plan-slug
+
+# After merging your PR
+claude-team branch done
+# ✓ Branch feat/user-auth marked as merged.
+#   To delete the local branch:
+#   git branch -d feat/user-auth
+
+# Or if you are abandoning the work instead
+claude-team branch abandon
+```
+
+### Protecting main
+
+One command installs a pre-commit hook that blocks accidental commits directly to `main` or `master`:
+
+```bash
+# Install once per repo
+claude-team branch guard install
+
+# Remove if needed
+claude-team branch guard remove
+```
+
+### How it integrates
+
+The `--plan` flag links a branch to an archived plan from the [plans skill](https://github.com/code-katz/claude-plans-skill). The coordinator reads `~/.claude/branches/INDEX.md` at session start: if an active branch is registered, it surfaces it immediately. If none is registered, it warns you before any code is written. Use the `/branch` slash command mid-session to check your current branch status without leaving Claude Code.
+
+Branch state persists across sessions and across projects. Use `claude-team branch list` to see the full index.
+
+---
+
 ## Installation
 
 ### Quick install
@@ -513,15 +571,13 @@ claude-team reset
 # Install slash commands (if you skipped install.sh or need to re-install)
 claude-team install-commands
 
-# Branch hygiene — register and close branches
+# Branch hygiene — see the Branch Hygiene section for the full workflow
 claude-team branch start feat/my-feature          # register before writing any code
-claude-team branch start feat/my-feature --plan slug  # link to an archived plan
+claude-team branch done                           # mark merged
+claude-team branch abandon                        # mark abandoned
 claude-team branch status                         # show active branch for this project
-claude-team branch done                           # mark merged, get delete commands
-claude-team branch abandon                        # mark abandoned, get delete commands
 claude-team branch list                           # show full branch index
 claude-team branch guard install                  # block accidental commits on main
-claude-team branch guard remove                   # remove the guard
 ```
 
 After activating a team member with `claude-team use`, **start a new Claude Code session** to apply the profile. To switch mid-session without restarting, use the slash commands (`/river`, `/akira`, etc.) directly in Claude Code.
