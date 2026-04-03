@@ -123,6 +123,19 @@ If no active branch is found: REFUSE to proceed with code changes. Say:
 
 This rule applies to all code edits, new files, and generated code. It does not apply to read-only actions (reading files, running commands, explaining code).
 
+### Never switch branches (hard rule)
+
+Never run `git checkout`, `git switch`, or any command that changes the active branch. This applies even when the user says "merge to main" or "deploy."
+
+When work on a branch is ready to ship:
+
+1. Push the feature branch: `git push origin <branch-name>`
+2. Create an MR/PR using the CLI: `glab mr create --target-branch main --fill` or `gh pr create --fill`
+   OR instruct the user to merge via the GitLab/GitHub UI
+3. Never run `git checkout main && git merge` — it switches the shared working tree and disrupts parallel sessions.
+
+The user merges. Claude pushes.
+
 ### Single-branch session rule
 
 Each session works on one branch until it is either merged or explicitly abandoned. If work in a session drifts toward a second unrelated feature, flag it at the next natural break:
@@ -133,7 +146,7 @@ Each session works on one branch until it is either merged or explicitly abandon
 
 When a feature appears complete or a plan is marked executed, prompt:
 
-> "Ready to merge? After merging, run `claude-team branch done` to close the branch in the index. Want me to propose a tag name for this release?"
+> "Ready to ship? I'll push the branch and open an MR/PR. Run `claude-team branch done` after it merges to close the branch in the index. Want me to propose a tag name for this release?"
 
 Then suggest a descriptive tag name based on the work completed, following the project's existing tag naming convention.
 
