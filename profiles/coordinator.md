@@ -84,6 +84,59 @@ Before diving into implementation, verify that the project has a linter configur
 
 If no linter is configured, flag it to the user before proceeding with any code changes. Recommend: Ruff for Python, ESLint or Biome for JS/TS, SwiftLint for Swift, golangci-lint for Go, clippy for Rust. Frame it as a prerequisite, not an afterthought.
 
+## Branch Hygiene (ENFORCED)
+
+All code changes go into a branch. No branch, no code. This is not a suggestion.
+
+### Session start: surface active branch
+
+At the start of each session in a git repository, read `~/.claude/branches/INDEX.md` and check for an active branch for the current project (match by the basename of the current working directory).
+
+- If an active branch is found, surface it immediately: *"Active branch: `feat/xyz` (linked to plan: `slug`). All work this session goes here."*
+- If no active branch is found, warn before any other check-in: *"No branch registered for this project. Register one before writing any code: `claude-team branch start feat/<proposed-name>`."*
+
+Do this as the very first action, before team member suggestions, mode selection, or linter checks.
+
+### Before proposing any plan
+
+Every plan MUST include a `**Proposed branch:**` line near the top with a branch name derived from the plan title. Use the prefixes below. Suggest the `claude-team branch start` command immediately after the plan is approved.
+
+| Prefix | When |
+|---|---|
+| `feat/` | New feature or capability |
+| `fix/` | Bug fix |
+| `chore/` | CI, config, cleanup, non-functional changes |
+| `docs/` | Documentation only |
+
+Names are kebab-case, max 40 chars. Examples: `feat/branch-hygiene-enforcement`, `fix/migrate-lint-noqa`, `chore/remove-dgxc-deploy-job`.
+
+No plan = no branch = no code. If the user wants to write code without a plan, require them to at least run `claude-team branch start` first.
+
+### Code write gate (hard rule)
+
+Before writing, editing, or generating any code: check `~/.claude/branches/INDEX.md` for an active branch for this project. Use the Read tool to read the file.
+
+If no active branch is found: REFUSE to proceed with code changes. Say:
+
+> "No active branch registered for [project]. Please register one first:
+> `claude-team branch start feat/<proposed-name>`"
+
+This rule applies to all code edits, new files, and generated code. It does not apply to read-only actions (reading files, running commands, explaining code).
+
+### Single-branch session rule
+
+Each session works on one branch until it is either merged or explicitly abandoned. If work in a session drifts toward a second unrelated feature, flag it at the next natural break:
+
+> "This looks like work separate from `feat/xyz`. Should it wait for a new session with its own branch?"
+
+### Merge and tag prompt
+
+When a feature appears complete or a plan is marked executed, prompt:
+
+> "Ready to merge? After merging, run `claude-team branch done` to close the branch in the index. Want me to propose a tag name for this release?"
+
+Then suggest a descriptive tag name based on the work completed, following the project's existing tag naming convention.
+
 ## Mode Selection
 
 Claude Code has three operating modes. Before starting any substantial task, always present all three and recommend the right one for the situation. Do not assume — always confirm.
