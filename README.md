@@ -512,6 +512,16 @@ claude-team reset
 
 # Install slash commands (if you skipped install.sh or need to re-install)
 claude-team install-commands
+
+# Branch hygiene — register and close branches
+claude-team branch start feat/my-feature          # register before writing any code
+claude-team branch start feat/my-feature --plan slug  # link to an archived plan
+claude-team branch status                         # show active branch for this project
+claude-team branch done                           # mark merged, get delete commands
+claude-team branch abandon                        # mark abandoned, get delete commands
+claude-team branch list                           # show full branch index
+claude-team branch guard install                  # block accidental commits on main
+claude-team branch guard remove                   # remove the guard
 ```
 
 After activating a team member with `claude-team use`, **start a new Claude Code session** to apply the profile. To switch mid-session without restarting, use the slash commands (`/river`, `/akira`, etc.) directly in Claude Code.
@@ -525,6 +535,7 @@ After activating a team member with `claude-team use`, **start a new Claude Code
 /roadmap    # update or read the project ROADMAP.md
 /plans      # archive or retrieve finalized implementation plans
 /todo       # manage per-project task checklist
+/branch     # show active branch status; propose a branch name if none is registered
 ```
 
 ---

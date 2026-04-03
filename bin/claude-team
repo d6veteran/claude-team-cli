@@ -6,6 +6,7 @@ set -euo pipefail
 
 PROFILES_DIR="${CLAUDE_TEAM_PROFILES:-$HOME/.claude/team}"
 CLAUDE_MD="$HOME/.claude/CLAUDE.md"
+BRANCHES_INDEX="$HOME/.claude/branches/INDEX.md"
 MARKER_START="<!-- CLAUDE-TEAM:START -->"
 MARKER_END="<!-- CLAUDE-TEAM:END -->"
 COORD_START="<!-- CLAUDE-COORDINATOR:START -->"
@@ -288,6 +289,219 @@ Make sure you are running this from the claude-team-cli repo."
   echo ""
 }
 
+# ─── Branch helpers ──────────────────────────────────────────────────────────
+
+get_project_name() {
+  local root
+  root=$(git rev-parse --show-toplevel 2>/dev/null) || die "Not inside a git repository."
+  basename "$root"
+}
+
+ensure_branches_index() {
+  if [[ ! -f "$BRANCHES_INDEX" ]]; then
+    mkdir -p "$(dirname "$BRANCHES_INDEX")"
+    printf '# Branch Index\n\n| Date | Project | Branch | Plan Slug | Status | Notes |\n|---|---|---|---|---|---|\n' \
+      > "$BRANCHES_INDEX"
+  fi
+}
+
+get_active_branch() {
+  local project="$1"
+  [[ -f "$BRANCHES_INDEX" ]] || { echo ""; return; }
+  awk -F'|' -v proj="$project" \
+    '$3 ~ " " proj " " && $6 ~ / active / { gsub(/^[[:space:]]+|[[:space:]]+$/, "", $4); print $4; exit }' \
+    "$BRANCHES_INDEX"
+}
+
+# ─── Branch commands ──────────────────────────────────────────────────────────
+
+cmd_branch_start() {
+  [[ $# -ge 1 ]] || die "Usage: claude-team branch start <branch-name> [--plan <slug>]"
+  local branch_name="$1"
+  shift
+  local plan_slug=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --plan)
+        [[ $# -ge 2 ]] || die "--plan requires a value"
+        plan_slug="$2"
+        shift 2
+        ;;
+      *) die "Unknown option: $1" ;;
+    esac
+  done
+
+  local project
+  project=$(get_project_name)
+
+  # Block if an active branch already exists for this project
+  local existing
+  existing=$(get_active_branch "$project")
+  if [[ -n "$existing" ]]; then
+    die "Active branch '$(bold "$existing")' already exists for '$project'.
+Run 'claude-team branch done' or 'claude-team branch abandon' before starting a new branch."
+  fi
+
+  ensure_branches_index
+
+  local today
+  today=$(date '+%Y-%m-%d')
+  printf '| %s | %s | %s | %s | active | |\n' \
+    "$today" "$project" "$branch_name" "$plan_slug" >> "$BRANCHES_INDEX"
+
+  echo ""
+  echo "$(green "✓") Branch $(bold "$branch_name") registered for $(bold "$project")."
+  [[ -n "$plan_slug" ]] && echo "$(dim "  Linked to plan: $plan_slug")"
+  echo "$(dim "  All work this session goes on this branch.")"
+  echo ""
+}
+
+cmd_branch_close() {
+  local new_status="$1"  # "merged" or "abandoned"
+  local project
+  project=$(get_project_name)
+
+  local active
+  active=$(get_active_branch "$project")
+  [[ -n "$active" ]] || die "No active branch found for '$project'. Nothing to close."
+
+  local tmp
+  tmp=$(mktemp)
+  awk -F'|' -v proj="$project" -v ns=" $new_status " '
+    $3 ~ " " proj " " && $6 ~ / active / {
+      d=$2; sub(/^[[:space:]]+/,"",d); sub(/[[:space:]]+$/,"",d)
+      p=$3; sub(/^[[:space:]]+/,"",p); sub(/[[:space:]]+$/,"",p)
+      b=$4; sub(/^[[:space:]]+/,"",b); sub(/[[:space:]]+$/,"",b)
+      s=$5; sub(/^[[:space:]]+/,"",s); sub(/[[:space:]]+$/,"",s)
+      printf "| %s | %s | %s | %s |%s| |\n", d, p, b, s, ns
+      next
+    }
+    { print }
+  ' "$BRANCHES_INDEX" > "$tmp" && mv "$tmp" "$BRANCHES_INDEX"
+
+  echo ""
+  if [[ "$new_status" == "merged" ]]; then
+    echo "$(green "✓") Branch $(bold "$active") marked as merged."
+    echo "$(dim "  To delete the local branch:")"
+    echo "  git branch -d $active"
+    echo "$(dim "  To delete the remote branch:")"
+    echo "  git push origin --delete $active"
+  else
+    echo "$(green "✓") Branch $(bold "$active") marked as abandoned."
+    echo "$(dim "  To delete the local branch:")"
+    echo "  git branch -D $active"
+  fi
+  echo ""
+}
+
+cmd_branch_done()    { cmd_branch_close "merged"; }
+cmd_branch_abandon() { cmd_branch_close "abandoned"; }
+
+cmd_branch_status() {
+  local project
+  project=$(get_project_name)
+
+  local active
+  active=$(get_active_branch "$project")
+
+  echo ""
+  if [[ -n "$active" ]]; then
+    echo "$(bold "Active branch:") $(green "$active") $(dim "($project)")"
+    # Show linked plan if any
+    if [[ -f "$BRANCHES_INDEX" ]]; then
+      local plan_slug
+      plan_slug=$(awk -F'|' -v proj="$project" \
+        '$3 ~ " " proj " " && $6 ~ / active / { gsub(/^[[:space:]]+|[[:space:]]+$/, "", $5); print $5; exit }' \
+        "$BRANCHES_INDEX")
+      [[ -n "$plan_slug" ]] && echo "$(dim "Linked plan:") $plan_slug"
+    fi
+  else
+    echo "$(bold "Active branch:") $(red "none")"
+    echo "$(dim "  No branch registered for '$project'.")"
+    echo "$(dim "  Start one: claude-team branch start feat/<name>")"
+  fi
+  echo ""
+}
+
+cmd_branch_list() {
+  ensure_branches_index
+  echo ""
+  echo "$(bold "Branch Index")"
+  echo ""
+  cat "$BRANCHES_INDEX"
+  echo ""
+  echo "$(dim "Index: $BRANCHES_INDEX")"
+  echo ""
+}
+
+cmd_branch_guard() {
+  local action="${1:-}"
+  [[ -n "$action" ]] || die "Usage: claude-team branch guard <install|remove>"
+
+  local git_root
+  git_root=$(git rev-parse --show-toplevel 2>/dev/null) || die "Not inside a git repository."
+  local hook_file="$git_root/.git/hooks/pre-commit"
+
+  case "$action" in
+    install)
+      if [[ -f "$hook_file" ]]; then
+        grep -q "claude-team" "$hook_file" 2>/dev/null \
+          || die "A pre-commit hook already exists at $hook_file (not installed by claude-team). Remove it manually first."
+      fi
+      local tmp_hook
+      tmp_hook=$(mktemp)
+      cat > "$tmp_hook" << 'HOOK'
+#!/usr/bin/env bash
+# Installed by claude-team branch guard
+# Blocks accidental direct commits on main/master
+branch=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+  echo "error: direct commits to $branch are not allowed." >&2
+  echo "Create a feature branch: git checkout -b feat/<name>" >&2
+  exit 1
+fi
+HOOK
+      mv "$tmp_hook" "$hook_file"
+      chmod +x "$hook_file"
+      echo ""
+      echo "$(green "✓") Branch guard installed."
+      echo "$(dim "  Direct commits to main/master are now blocked.")"
+      echo "$(dim "  Hook: $hook_file")"
+      echo ""
+      ;;
+    remove)
+      if [[ ! -f "$hook_file" ]]; then
+        echo ""
+        echo "$(dim "No pre-commit hook found at $hook_file.")"
+        echo ""
+        return
+      fi
+      grep -q "claude-team" "$hook_file" 2>/dev/null \
+        || die "Hook at $hook_file was not installed by claude-team. Remove it manually."
+      rm "$hook_file"
+      echo ""
+      echo "$(green "✓") Branch guard removed."
+      echo ""
+      ;;
+    *) die "Unknown guard action: $action. Use 'install' or 'remove'." ;;
+  esac
+}
+
+cmd_branch() {
+  local subcmd="${1:-}"
+  [[ -n "$subcmd" ]] || die "Usage: claude-team branch <start|done|abandon|status|list|guard>"
+  shift
+  case "$subcmd" in
+    start)   cmd_branch_start "$@" ;;
+    done)    cmd_branch_done ;;
+    abandon) cmd_branch_abandon ;;
+    status)  cmd_branch_status ;;
+    list)    cmd_branch_list ;;
+    guard)   cmd_branch_guard "${1:-}" ;;
+    *) die "Unknown branch subcommand: $subcmd. Use start|done|abandon|status|list|guard." ;;
+  esac
+}
+
 cmd_help() {
   echo ""
   echo "$(bold "claude-team") — Manage Claude Code team member personas"
@@ -300,6 +514,17 @@ cmd_help() {
   echo "  claude-team status                  Show active team member and coordinator state"
   echo "  claude-team coordinator on|off      Enable/disable proactive team check-ins"
   echo "  claude-team install-commands        Install slash commands to ~/.claude/commands/"
+  echo ""
+  echo "$(bold "Branch hygiene:")"
+  echo "  claude-team branch start <name>    Register a branch for the current project"
+  echo "  claude-team branch start <name> --plan <slug>"
+  echo "                                     Register a branch linked to an archived plan"
+  echo "  claude-team branch done            Mark active branch as merged; print delete commands"
+  echo "  claude-team branch abandon         Mark active branch as abandoned; print delete commands"
+  echo "  claude-team branch status          Show active branch for the current project"
+  echo "  claude-team branch list            Show full branch index (~/.claude/branches/INDEX.md)"
+  echo "  claude-team branch guard install   Install pre-commit hook blocking commits on main/master"
+  echo "  claude-team branch guard remove    Remove the pre-commit hook"
   echo ""
   echo "$(bold "Examples:")"
   echo "  claude-team use robin               Activate Robin (Testing)"
@@ -326,6 +551,7 @@ case "${1:-help}" in
   status)           cmd_status ;;
   coordinator)      cmd_coordinator "${2:-}" ;;
   install-commands) cmd_install_commands ;;
+  branch)           shift; cmd_branch "$@" ;;
   help|--help|-h)   cmd_help ;;
   *) die "Unknown command: $1. Run 'claude-team help' for usage." ;;
 esac
