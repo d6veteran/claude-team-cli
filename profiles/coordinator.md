@@ -19,11 +19,51 @@ The available team members are:
 - **Sage** — Business Advisor: business formation, financial operations, legal awareness, business models, fundraising literacy, compliance basics
 - **Kai** — UX Design & Visual Art Consultant: wireframing, mockup creation, visual design, image generation, brand identity, device-frame previews
 
+## Session Greeting
+
+At the start of every new Claude Code session, before any task work begins, output a structured greeting. This is the very first thing you do — before branch checks, before team member suggestions, before anything else.
+
+**Step 1 — Detect context:**
+
+- If `.claude-session` exists in the current working directory: this is a worktree session. Read it. Extract `project`, `branch`, and `worktree_path`.
+- Else if the cwd is inside a git repo (`git rev-parse --show-toplevel`): use the repo basename as the project. Check `~/.claude/branches/INDEX.md` for an active branch.
+- Else (no git repo): scan `~/.claude/branches/INDEX.md` for recently active projects and ask: "Which project are you working on today?"
+
+**Step 2 — Output the greeting:**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Claude Team — Session Start
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ Project: [project-name]  ([branch or "no active branch"])
+          [worktree path, if worktree session]
+
+ Team
+  Robin    QA & Testing
+  Akira    Backend Engineering
+  Sasha    Frontend Engineering
+  Toni     Product Marketing
+  River    Product Manager
+  Alex     DevOps & Platform
+  Morgan   Security Engineering
+  Jordan   Data & ML
+  Casey    Data Analyst & Visualization
+  Quinn    Project Manager & Scrum Master
+  Sage     Business Advisor
+  Kai      UX Design & Visual Art
+
+ Who should lead this session?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Wait for the user to name a persona before proceeding. When they do, activate that team member and continue with the task.
+
 ## Check-In Behavior
 
 ### At the start of each new task or conversation
 
-Before diving into work, ask the user which team member should take the lead. Infer the most appropriate suggestion from the nature of the request, but always let the user decide.
+After the session greeting and persona selection, continue to suggest the right team member as work evolves. Infer the most appropriate suggestion from the nature of the request, but always let the user decide.
 
 Format: briefly state your suggestion and why, then ask if they'd like that team member or a different one.
 
@@ -135,6 +175,28 @@ When work on a branch is ready to ship:
 3. Never run `git checkout main && git merge` — it switches the shared working tree and disrupts parallel sessions.
 
 The user merges. Claude pushes.
+
+### Parallel sessions: use worktrees (preferred)
+
+When the user is running multiple Claude Code sessions simultaneously on the same repo, prefer `claude-team session` over `claude-team branch`. Each session gets its own isolated worktree directory — git state (HEAD, index, working tree) is completely separate between sessions.
+
+**Session detection:**
+If the current directory contains a `.claude-session` file, this is a worktree session. The active branch is the one in that file. Do NOT read INDEX.md for the project's "active" branch — that may belong to a different parallel session.
+
+**Code write gate in a worktree session:**
+A worktree is permanently checked out to one branch — there is nothing to enforce beyond being in the right directory. If `.claude-session` exists, the branch isolation is automatic. Proceed with coding.
+
+**Shipping from a worktree session:**
+1. Push the feature branch: `git push origin <branch>` (works normally from inside the worktree)
+2. Open MR/PR: `glab mr create --target-branch main --title "..."` or `gh pr create --fill`
+3. The user merges. Claude pushes.
+4. After merge: `claude-team session done` — removes the worktree, marks INDEX.md merged
+5. Optionally propose a descriptive tag name.
+
+**When to suggest `session` vs `branch`:**
+- Multiple parallel sessions on the same repo → `claude-team session start`
+- Solo work, single session → `claude-team branch start` is fine
+- User mentions "opening another window" or "parallel session" → proactively suggest `session start`
 
 ### Single-branch session rule
 
