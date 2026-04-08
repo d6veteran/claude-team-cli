@@ -169,12 +169,16 @@ Never run `git checkout`, `git switch`, or any command that changes the active b
 
 When work on a branch is ready to ship:
 
-1. Push the feature branch: `git push origin <branch-name>`
-2. Create an MR/PR using the CLI: `glab mr create --target-branch main --fill` or `gh pr create --fill`
+1. `git fetch origin` — sync with the current state of main
+2. `git rebase origin/main` — replay your commits on top of it
+   - If conflicts: resolve file by file, then `git rebase --continue`
+   - If it gets complicated: `git rebase --abort` and flag to the user
+3. `git push origin <branch-name>` — or `git push --force-with-lease` if you already pushed before rebasing
+4. Create an MR/PR: `glab mr create --target-branch main --fill` or `gh pr create --fill`
    OR instruct the user to merge via the GitLab/GitHub UI
-3. Never run `git checkout main && git merge` — it switches the shared working tree and disrupts parallel sessions.
+5. Never run `git checkout main && git merge` — it switches the shared working tree and disrupts parallel sessions.
 
-The user merges. Claude pushes.
+The user merges. Claude pushes. After merge confirmed: run devlog + plan wrap-up (see Session Wrap-Up below), then `claude-team session done`.
 
 ### Parallel sessions: use worktrees (preferred)
 
@@ -187,11 +191,18 @@ If the current directory contains a `.claude-session` file, this is a worktree s
 A worktree is permanently checked out to one branch — there is nothing to enforce beyond being in the right directory. If `.claude-session` exists, the branch isolation is automatic. Proceed with coding.
 
 **Shipping from a worktree session:**
-1. Push the feature branch: `git push origin <branch>` (works normally from inside the worktree)
-2. Open MR/PR: `glab mr create --target-branch main --title "..."` or `gh pr create --fill`
-3. The user merges. Claude pushes.
-4. After merge: `claude-team session done` — removes the worktree, marks INDEX.md merged
-5. Optionally propose a descriptive tag name.
+
+Before pushing, always sync with main to prevent merge conflicts:
+
+1. `git fetch origin` — download the current state of main
+2. `git rebase origin/main` — replay your commits on top of it
+   - If conflicts: resolve file by file, then `git rebase --continue`
+   - If it gets complicated: `git rebase --abort` and flag to the user
+3. `git push origin <branch>` — or `git push --force-with-lease` if you already pushed before rebasing
+4. Open MR/PR: `glab mr create --target-branch main --title "..."` or `gh pr create --fill`
+5. The user merges. Claude pushes. Never `git checkout main`.
+6. After merge confirmed: run devlog + plan wrap-up (see Session Wrap-Up below), then `claude-team session done`.
+7. Optionally propose a descriptive tag name.
 
 **When to suggest `session` vs `branch`:**
 - Multiple parallel sessions on the same repo → `claude-team session start`
@@ -211,6 +222,51 @@ When a feature appears complete or a plan is marked executed, prompt:
 > "Ready to ship? I'll push the branch and open an MR/PR. Run `claude-team branch done` after it merges to close the branch in the index. Want me to propose a tag name for this release?"
 
 Then suggest a descriptive tag name based on the work completed, following the project's existing tag naming convention.
+
+## Session Workflow Checklist
+
+Every worktree session follows this sequence. At session start, use the TodoWrite tool to create this checklist so progress is visible throughout the session:
+
+```
+[ ] Branch created and worktree active
+[ ] Plan approved (or confirmed not needed for small fix)
+[ ] Code complete and committed
+[ ] git fetch origin && git rebase origin/main
+[ ] git push origin <branch> (--force-with-lease if re-push)
+[ ] MR/PR opened
+[ ] User confirmed merge + deploy green
+[ ] Devlog updated
+[ ] Plan marked executed (if applicable)
+[ ] claude-team session done
+```
+
+Mark each item completed as it is done. Do not batch completions — mark immediately.
+The list is the shared contract between Claude and the user for what "done" means.
+
+## Session Wrap-Up (required before cleanup)
+
+Before running `claude-team session done`, complete the following in order:
+
+### 1. Devlog
+
+Write a devlog entry for the session's work. Use the `/devlog` skill.
+Cover: what was built or fixed, any key decisions made, rejected approaches, risks.
+Do not skip this step — devlog is the institutional memory of the project.
+
+### 2. Plans
+
+If a plan was used this session, mark it executed:
+- Say "mark the plan executed" to trigger the plans skill
+- Or manually update the plan file's status to `executed`
+
+If no plan was used (small fix), note it briefly in the devlog instead.
+
+### 3. Cleanup
+
+Run `claude-team session done` to remove the worktree and close the branch in the index.
+
+This order matters: devlog and plan update happen while the worktree is still active
+and the code context is fresh. Cleanup is always last.
 
 ## Mode Selection
 
