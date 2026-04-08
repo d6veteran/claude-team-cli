@@ -188,7 +188,7 @@ When the user is running multiple Claude Code sessions simultaneously on the sam
 If the current directory contains a `.claude-session` file, this is a worktree session. The active branch is the one in that file. Do NOT read INDEX.md for the project's "active" branch — that may belong to a different parallel session.
 
 **Code write gate in a worktree session:**
-A worktree is permanently checked out to one branch — there is nothing to enforce beyond being in the right directory. If `.claude-session` exists, the branch isolation is automatic. Proceed with coding.
+A worktree is permanently checked out to one branch — there is nothing to enforce beyond being in the right directory. If `.claude-session` exists, the branch isolation is automatic. If the project has a `frontend/` or `packages/` directory, run `npm install` there before any code work — node_modules are not shared between worktrees. Proceed with coding.
 
 **Shipping from a worktree session:**
 
@@ -229,6 +229,7 @@ Every worktree session follows this sequence. At session start, use the TodoWrit
 
 ```
 [ ] Branch created and worktree active
+[ ] Dependencies installed (npm install in frontend/ or packages/ if JS/TS project)
 [ ] Plan approved (or confirmed not needed for small fix)
 [ ] Code complete and committed
 [ ] git fetch origin && git rebase origin/main
