@@ -64,7 +64,7 @@ cmd_list() {
     [[ -f "$profile" ]] || continue
     local name
     name=$(basename "$profile" .md)
-    [[ "$name" == "coordinator" ]] && continue  # coordinator is not a team member
+    [[ "$name" == coordinator* ]] && continue  # coordinator profiles are not team members
     # Extract the title line (first # heading)
     local title
     title=$(grep -m1 '^# ' "$profile" | sed 's/^# //')
@@ -173,9 +173,13 @@ cmd_status() {
   local active
   active=$(get_active)
 
-  local coord_on="no"
+  local coord_mode="off"
   if grep -qF "$COORD_START" "$CLAUDE_MD" 2>/dev/null; then
-    coord_on="yes"
+    if grep -q "CLAUDE-COORD-MODE: prod" "$CLAUDE_MD" 2>/dev/null; then
+      coord_mode="prod"
+    else
+      coord_mode="casual"
+    fi
   fi
 
   echo ""
@@ -184,48 +188,66 @@ cmd_status() {
   else
     echo "$(bold "Active team member:") $(dim "none")"
   fi
-  if [[ "$coord_on" == "yes" ]]; then
-    echo "$(bold "Coordinator:") $(green "on")"
+  if [[ "$coord_mode" == "prod" ]]; then
+    echo "$(bold "Coordinator:") $(green "on (prod)") — branch enforcement active"
+  elif [[ "$coord_mode" == "casual" ]]; then
+    echo "$(bold "Coordinator:") $(green "on (casual)") — branch enforcement off"
   else
     echo "$(bold "Coordinator:") $(dim "off")"
   fi
   echo ""
 }
 
+_coordinator_install() {
+  local coord_file="$1"
+  local mode_label="$2"
+  local mode_desc="$3"
+
+  [[ -f "$coord_file" ]] || die "Coordinator profile not found: $coord_file
+Run the installer first: bash install.sh"
+
+  touch "$CLAUDE_MD"
+  local content
+  content=$(cat "$coord_file")
+
+  if grep -qF "$COORD_START" "$CLAUDE_MD"; then
+    local tmp
+    tmp=$(mktemp)
+    awk "/$COORD_START/{exit} {print}" "$CLAUDE_MD" > "$tmp"
+    printf '%s\n%s\n%s\n' "$COORD_START" "$content" "$COORD_END" >> "$tmp"
+    awk "/$COORD_END/{found=1; next} found{print}" "$CLAUDE_MD" >> "$tmp"
+    mv "$tmp" "$CLAUDE_MD"
+    echo ""
+    echo "$(green "✓") Coordinator $(bold "$mode_label") — profile refreshed."
+  else
+    local block
+    block=$(printf '%s\n%s\n%s' "$COORD_START" "$content" "$COORD_END")
+    printf '\n%s\n' "$block" >> "$CLAUDE_MD"
+    echo ""
+    echo "$(green "✓") Coordinator $(bold "$mode_label")."
+    echo "$(dim "$mode_desc")"
+  fi
+  echo "$(dim "Start a new Claude Code session to apply.")"
+  echo ""
+}
+
 cmd_coordinator() {
   local action="${1:-}"
-  [[ -n "$action" ]] || die "Usage: claude-team coordinator <on|off>"
+  [[ -n "$action" ]] || die "Usage: claude-team coordinator <on|prod|off>"
 
   case "$action" in
     on)
-      local coord_file="$PROFILES_DIR/coordinator.md"
-      [[ -f "$coord_file" ]] || die "Coordinator profile not found: $coord_file
-Run the installer first: bash install.sh"
+      _coordinator_install \
+        "$PROFILES_DIR/coordinator.md" \
+        "on (casual)" \
+        "Claude will proactively suggest team members. Commit directly to main — no branch enforcement."
+      ;;
 
-      touch "$CLAUDE_MD"
-      local content
-      content=$(cat "$coord_file")
-      local block
-      block=$(printf '%s\n%s\n%s' "$COORD_START" "$content" "$COORD_END")
-
-      if grep -qF "$COORD_START" "$CLAUDE_MD"; then
-        # Replace existing coordinator block by splitting around the markers
-        local tmp
-        tmp=$(mktemp)
-        awk "/$COORD_START/{exit} {print}" "$CLAUDE_MD" > "$tmp"
-        printf '%s\n%s\n%s\n' "$COORD_START" "$content" "$COORD_END" >> "$tmp"
-        awk "/$COORD_END/{found=1; next} found{print}" "$CLAUDE_MD" >> "$tmp"
-        mv "$tmp" "$CLAUDE_MD"
-        echo ""
-        echo "$(green "✓") Coordinator already on — profile refreshed."
-      else
-        printf '\n%s\n' "$block" >> "$CLAUDE_MD"
-        echo ""
-        echo "$(green "✓") Coordinator $(bold "on")."
-        echo "$(dim "Claude will now proactively suggest team members and mode switches.")"
-      fi
-      echo "$(dim "Start a new Claude Code session to apply.")"
-      echo ""
+    prod)
+      _coordinator_install \
+        "$PROFILES_DIR/coordinator-prod.md" \
+        "on (prod)" \
+        "Claude will enforce branch hygiene: branches required, worktrees for parallel sessions, MR/PR flow."
       ;;
 
     off)
@@ -251,7 +273,7 @@ Run the installer first: bash install.sh"
       ;;
 
     *)
-      die "Unknown coordinator action: $action. Use 'on' or 'off'."
+      die "Unknown coordinator action: $action. Use 'on', 'prod', or 'off'."
       ;;
   esac
 }
@@ -727,7 +749,9 @@ cmd_help() {
   echo "  claude-team use <name>              Activate a team member in Claude Code"
   echo "  claude-team reset                   Deactivate the current team member"
   echo "  claude-team status                  Show active team member and coordinator state"
-  echo "  claude-team coordinator on|off      Enable/disable proactive team check-ins"
+  echo "  claude-team coordinator on          Enable coordinator (casual — no branch enforcement)"
+  echo "  claude-team coordinator prod        Enable coordinator (prod — branch enforcement on)"
+  echo "  claude-team coordinator off         Disable coordinator"
   echo "  claude-team install-commands        Install slash commands to ~/.claude/commands/"
   echo ""
   echo "$(bold "Parallel sessions (worktrees):")"
@@ -762,7 +786,8 @@ cmd_help() {
   echo "  claude-team use quinn               Activate Quinn (Project Manager)"
   echo "  claude-team use sage                Activate Sage (Business Advisor)"
   echo "  claude-team use kai                 Activate Kai (UX Design)"
-  echo "  claude-team coordinator on          Enable proactive team suggestions"
+  echo "  claude-team coordinator on          Enable coordinator (casual — commit to main, no branch gate)"
+  echo "  claude-team coordinator prod        Enable coordinator (prod — branch required before code)"
   echo "  claude-team reset                   Return to default Claude behavior"
   echo "  claude-team install-commands        Install all slash commands to ~/.claude/commands/"
   echo ""
