@@ -37,7 +37,7 @@
 
 **[Parallel sessions](#coordinator-proactive-team-check-ins)** — run independent work streams simultaneously, each with a dedicated team member, scoped task, and explicit file boundary. No merge conflicts. No context bleed.
 
-**[Branch hygiene](#branch-hygiene-one-branch-per-session)** — register a branch before writing code, close it after merging, and never lose track of what Claude is building across sessions or projects.
+**[Casual and production workflow modes](#coordinator-proactive-team-check-ins)** — casual mode (default) commits straight to main with no branch enforcement; production mode adds branch gates, worktrees, and MR/PR flow as an explicit opt-in.
 
 ---
 
@@ -440,22 +440,35 @@ When starting work on a new project or codebase, the coordinator verifies that a
 - Change your operating mode (it suggests; you switch in the Claude Code UI)
 - Interrupt mid-response (check-ins happen at natural breaks only)
 
-Enable it during installation or at any time:
+### Workflow modes: casual and prod
+
+The coordinator ships in two modes. **Casual is the default** — if you run `coordinator on` or select it during `bash install.sh`, you get casual mode.
+
+**Casual mode** handles team member routing, mode suggestions, and lint checks, but does not enforce branch registration or block code changes. Right for personal projects, learning, and anyone committing directly to `main`.
+
+**Prod mode** is an explicit opt-in. Claude blocks code changes until a branch is registered, requires worktrees for parallel sessions, enforces a rebase-then-push ship workflow, and prompts for an MR/PR before closing a session. Right for team projects, pull requests, and anywhere branching discipline matters.
+
+Enable and switch modes at any time — including mid-session via slash commands:
 
 ```bash
-claude-team coordinator on    # casual mode — commit to main, no branch enforcement
-claude-team coordinator prod  # prod mode — branch required before any code
+claude-team coordinator on    # casual mode — the default
+claude-team coordinator prod  # production mode — opt-in
 claude-team coordinator off   # disable
-claude-team status            # see coordinator state + active team member
+claude-team status            # shows: on (casual), on (prod), or off
 ```
 
-**Casual mode** (default) is designed for personal projects, learning, and anyone who commits directly to `main`. The coordinator handles team member routing and mode suggestions, but skips branch gates entirely.
+```
+/prod-mode     # switch to prod mid-session
+/casual-mode   # switch to casual mid-session
+```
 
-**Prod mode** adds branch enforcement: Claude blocks code edits until a branch is registered, requires worktrees for parallel sessions, and prompts for an MR/PR before closing a session. This is the right choice for team projects, PRs, and anywhere discipline around branching matters.
+During `bash install.sh`, the installer prompts `[casual/prod/n]` — the default is casual.
 
 ---
 
 ## Branch Hygiene: One Branch Per Session
+
+> **Prod mode only.** Branch hygiene enforcement is active when `claude-team coordinator prod` is set. Casual mode users commit directly to `main` — this section is not required for your setup.
 
 Without structure, work accumulates on `main`. Sessions start without knowing what was in progress. Branches get abandoned. Features land on the wrong base.
 
@@ -704,65 +717,32 @@ claude-team-cli/
 
 ## Roadmap
 
-### v0.1
+See [ROADMAP.md](ROADMAP.md) for the living roadmap with current priorities and aspirational bets.
 
-- Five team member personas: Robin, Akira, Sasha, Toni, River
-- `claude-team` CLI with `use`, `list`, `show`, `reset`, `status`
-- Coordinator layer with proactive team member suggestions and three-mode recommendations
-- One-command installer with interactive coordinator prompt
-
-### v0.2
-
-**In-session persona switching via slash commands**
-
-Switch team members mid-session, no restart required. Each command injects the full persona into the conversation and updates the CLI state.
-
-| Command | Effect |
-|---|---|
-| `/river` | Switch to River (Product Management) |
-| `/akira` | Switch to Akira (Backend Engineering) |
-| `/sasha` | Switch to Sasha (Frontend Engineering) |
-| `/toni` | Switch to Toni (Product Marketing) |
-| `/robin` | Switch to Robin (QA & Testing) |
-| `/team` | Show current team status inline |
-
-### v0.3
-
-**Four new specialists and Required Interactive Behaviors for all team members**
-
-Expanded the team from five to nine, covering the full product development lifecycle from discovery through launch.
-
-| New Member | Domain |
-|---|---|
-| Jordan | Data & ML: pipelines, MLOps, data quality, model governance |
-| Casey | Data Analytics: dashboards, KPIs, BI architecture, data storytelling |
-| Morgan | Security Engineering: threat modeling, compliance, IAM, penetration testing |
-| Alex | DevOps & Platform: CI/CD, Kubernetes, infrastructure, SRE |
-
-Every team member now has **Required Interactive Behaviors**: structured check-ins and challenge patterns that ensure each specialist actually behaves like a consultant, not just a persona. Robin mandates security regression tests for every vulnerability patch. River runs a "Problem Statement Drill" before any requirements are accepted. Casey won't let a metric onto a dashboard without a business decision to justify it. Toni forces a "So What?" challenge on every positioning claim.
+For the full version history, see [DEVLOG.md](DEVLOG.md).
 
 ### v0.4
 
-**New specialist: Sage (Business Advisor)**
+**Sage (Business Advisor)** — business formation, financial ops, legal awareness, fundraising literacy, compliance basics. Clear professional-advice boundary: Sage flags exactly when to consult a licensed attorney, CPA, or financial advisor. Expanded the team to eleven specialists.
 
-Added Sage to cover the business operations gap: formation, financial infrastructure, legal awareness, business models, and fundraising literacy. Sage operates with a clear professional-advice boundary, flagging exactly when and why to consult a licensed attorney, CPA, or financial advisor. Expanded the team from ten to eleven specialists.
+### v0.5
 
-| New Member | Domain |
-|---|---|
-| Sage | Business Advisor: formation, financial ops, legal awareness, fundraising, compliance |
+**Kai (UX Design & Visual Art)** — wireframes, HTML/CSS mockups, visual design, AI image generation via Hugging Face MCP (FLUX.1, Qwen-Image). Clear boundary with Sasha: Kai designs the visual target, Sasha implements it in production code. Expanded the team to twelve specialists.
 
-### v0.5 (current)
+### v0.6 (current)
 
-**New specialist: Kai (UX Design & Visual Art Consultant)**
+**Two-mode coordinator + branch hygiene infrastructure**
 
-Added Kai to own the visual design layer before code. Kai produces HTML/CSS mockups (self-contained device-frame files matching the d20Mob convention), wireframes, mood boards, and AI-generated images via Hugging Face MCP tools (FLUX.1, Qwen-Image). Clear boundary with Sasha: Kai designs the visual target, Sasha implements it in production code. Expanded the team from eleven to twelve specialists.
+- Casual mode (default): no branch enforcement — commit directly to `main`
+- Prod mode (opt-in): branch required before any code, worktree isolation, MR/PR workflow
+- `/prod-mode` and `/casual-mode` slash commands
+- `claude-team branch` and `claude-team session` command families
+- 82-test suite covering all CLI commands and both coordinator modes
 
-| New Member | Domain |
-|---|---|
-| Kai | UX Design & Visual Art: wireframes, mockups, visual design, image generation, brand identity |
+### Later — Exploring with the Community
 
-### Later
+If any of these would change how you use the tool, [open an issue](https://github.com/code-katz/claude-team-cli/issues).
 
-- **Session handoff context:** when switching team members mid-task, the coordinator generates a briefing summary so the new team member doesn't start cold
-- **Local profile overrides:** `~/.claude/team/local/` directory for team-specific customizations without forking the repo
-- **Team-scoped profiles:** `claude-team init` creates a `.claude-team/` config in a project repo, so conventions are shared across a dev team
+- **Local profile overrides:** `~/.claude/team/local/` for per-user customizations without forking the repo
+- **Team-scoped profiles:** `claude-team init` creates a `.claude-team/` config in a project repo, shared across the dev team
+- **Session handoff briefing:** when switching team members mid-task, the coordinator generates a structured briefing so the incoming specialist doesn't start cold
