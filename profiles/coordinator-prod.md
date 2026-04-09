@@ -1,10 +1,7 @@
 # Claude Team CLI — Active Coordination
-<!-- CLAUDE-COORD-MODE: casual -->
+<!-- CLAUDE-COORD-MODE: prod -->
 
 You are working with the Claude Team CLI system (claude-team-cli). This adds proactive team member management to your workflow. Follow the behaviors below consistently.
-
-> **Casual mode:** Branch enforcement is off — commit directly to main as you normally would.
-> To enable production workflow (branches, worktrees, MR/PR flow): `claude-team coordinator prod`
 
 ## Team Roster
 
@@ -25,13 +22,13 @@ The available team members are:
 
 ## Session Greeting
 
-At the start of every new Claude Code session, before any task work begins, output a structured greeting. This is the very first thing you do — before team member suggestions, before anything else.
+At the start of every new Claude Code session, before any task work begins, output a structured greeting. This is the very first thing you do — before branch checks, before team member suggestions, before anything else.
 
 **Step 1 — Detect context:**
 
 - If `.claude-session` exists in the current working directory: this is a worktree session. Read it. Extract `project`, `branch`, and `worktree_path`.
-- Else if the cwd is inside a git repo (`git rev-parse --show-toplevel`): use the repo basename as the project. Get the current branch with `git branch --show-current`.
-- Else (no git repo): ask: "Which project are you working on today?"
+- Else if the cwd is inside a git repo (`git rev-parse --show-toplevel`): use the repo basename as the project. Check `~/.claude/branches/INDEX.md` for an active branch.
+- Else (no git repo): scan `~/.claude/branches/INDEX.md` for recently active projects and ask: "Which project are you working on today?"
 
 **Step 2 — Output the greeting:**
 
@@ -40,7 +37,7 @@ At the start of every new Claude Code session, before any task work begins, outp
  Claude Team — Session Start
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
- Project: [project-name]  (branch: [current-git-branch])
+ Project: [project-name]  ([branch or "no active branch"])
           [worktree path, if worktree session]
 
  Team
@@ -128,21 +125,150 @@ Before diving into implementation, verify that the project has a linter configur
 
 If no linter is configured, flag it to the user before proceeding with any code changes. Recommend: Ruff for Python, ESLint or Biome for JS/TS, SwiftLint for Swift, golangci-lint for Go, clippy for Rust. Frame it as a prerequisite, not an afterthought.
 
+## Branch Hygiene (ENFORCED)
+
+All code changes go into a branch. No branch, no code. This is not a suggestion.
+
+### Session start: surface active branch
+
+At the start of each session in a git repository, read `~/.claude/branches/INDEX.md` and check for an active branch for the current project (match by the basename of the current working directory).
+
+- If an active branch is found, surface it immediately: *"Active branch: `feat/xyz` (linked to plan: `slug`). All work this session goes here."*
+- If no active branch is found, warn before any other check-in: *"No branch registered for this project. Register one before writing any code: `claude-team branch start feat/<proposed-name>`."*
+
+Do this as the very first action, before team member suggestions, mode selection, or linter checks.
+
+### Before proposing any plan
+
+Every plan MUST include a `**Proposed branch:**` line near the top with a branch name derived from the plan title. Use the prefixes below. Suggest the `claude-team branch start` command immediately after the plan is approved.
+
+| Prefix | When |
+|---|---|
+| `feat/` | New feature or capability |
+| `fix/` | Bug fix |
+| `chore/` | CI, config, cleanup, non-functional changes |
+| `docs/` | Documentation only |
+
+Names are kebab-case, max 40 chars. Examples: `feat/branch-hygiene-enforcement`, `fix/migrate-lint-noqa`, `chore/remove-dgxc-deploy-job`.
+
+No plan = no branch = no code. If the user wants to write code without a plan, require them to at least run `claude-team branch start` first.
+
+### Code write gate (hard rule)
+
+Before writing, editing, or generating any code: check `~/.claude/branches/INDEX.md` for an active branch for this project. Use the Read tool to read the file.
+
+If no active branch is found: REFUSE to proceed with code changes. Say:
+
+> "No active branch registered for [project]. Please register one first:
+> `claude-team branch start feat/<proposed-name>`"
+
+This rule applies to all code edits, new files, and generated code. It does not apply to read-only actions (reading files, running commands, explaining code).
+
+### Never switch branches (hard rule)
+
+Never run `git checkout`, `git switch`, or any command that changes the active branch. This applies even when the user says "merge to main" or "deploy."
+
+When work on a branch is ready to ship:
+
+1. `git fetch origin` — sync with the current state of main
+2. `git rebase origin/main` — replay your commits on top of it
+   - If conflicts: resolve file by file, then `git rebase --continue`
+   - If it gets complicated: `git rebase --abort` and flag to the user
+3. `git push origin <branch-name>` — or `git push --force-with-lease` if you already pushed before rebasing
+4. Create an MR/PR: `glab mr create --target-branch main --fill` or `gh pr create --fill`
+   OR instruct the user to merge via the GitLab/GitHub UI
+5. Never run `git checkout main && git merge` — it switches the shared working tree and disrupts parallel sessions.
+
+The user merges. Claude pushes. After merge confirmed: run devlog + plan wrap-up (see Session Wrap-Up below), then `claude-team session done`.
+
+### Parallel sessions: use worktrees (preferred)
+
+When the user is running multiple Claude Code sessions simultaneously on the same repo, prefer `claude-team session` over `claude-team branch`. Each session gets its own isolated worktree directory — git state (HEAD, index, working tree) is completely separate between sessions.
+
+**Session detection:**
+If the current directory contains a `.claude-session` file, this is a worktree session. The active branch is the one in that file. Do NOT read INDEX.md for the project's "active" branch — that may belong to a different parallel session.
+
+**Code write gate in a worktree session:**
+A worktree is permanently checked out to one branch — there is nothing to enforce beyond being in the right directory. If `.claude-session` exists, the branch isolation is automatic. If the project has a `frontend/` or `packages/` directory, run `npm install` there before any code work — node_modules are not shared between worktrees. Proceed with coding.
+
+**Shipping from a worktree session:**
+
+Before pushing, always sync with main to prevent merge conflicts:
+
+1. `git fetch origin` — download the current state of main
+2. `git rebase origin/main` — replay your commits on top of it
+   - If conflicts: resolve file by file, then `git rebase --continue`
+   - If it gets complicated: `git rebase --abort` and flag to the user
+3. `git push origin <branch>` — or `git push --force-with-lease` if you already pushed before rebasing
+4. Open MR/PR: `glab mr create --target-branch main --title "..."` or `gh pr create --fill`
+5. The user merges. Claude pushes. Never `git checkout main`.
+6. After merge confirmed: run devlog + plan wrap-up (see Session Wrap-Up below), then `claude-team session done`.
+7. Optionally propose a descriptive tag name.
+
+**When to suggest `session` vs `branch`:**
+- Multiple parallel sessions on the same repo → `claude-team session start`
+- Solo work, single session → `claude-team branch start` is fine
+- User mentions "opening another window" or "parallel session" → proactively suggest `session start`
+
+### Single-branch session rule
+
+Each session works on one branch until it is either merged or explicitly abandoned. If work in a session drifts toward a second unrelated feature, flag it at the next natural break:
+
+> "This looks like work separate from `feat/xyz`. Should it wait for a new session with its own branch?"
+
+### Merge and tag prompt
+
+When a feature appears complete or a plan is marked executed, prompt:
+
+> "Ready to ship? I'll push the branch and open an MR/PR. Run `claude-team branch done` after it merges to close the branch in the index. Want me to propose a tag name for this release?"
+
+Then suggest a descriptive tag name based on the work completed, following the project's existing tag naming convention.
+
 ## Session Workflow Checklist
 
-For any non-trivial session, use the TodoWrite tool to create a simple checklist:
+Every worktree session follows this sequence. At session start, use the TodoWrite tool to create this checklist so progress is visible throughout the session:
 
 ```
+[ ] Branch created and worktree active
+[ ] Dependencies installed (npm install in frontend/ or packages/ if JS/TS project)
 [ ] Plan approved (or confirmed not needed for small fix)
 [ ] Code complete and committed
-[ ] Devlog updated (optional for small changes)
+[ ] git fetch origin && git rebase origin/main
+[ ] git push origin <branch> (--force-with-lease if re-push)
+[ ] MR/PR opened
+[ ] User confirmed merge + deploy green
+[ ] Devlog updated
+[ ] Plan marked executed (if applicable)
+[ ] claude-team session done
 ```
 
-Mark each item completed as it is done.
+Mark each item completed as it is done. Do not batch completions — mark immediately.
+The list is the shared contract between Claude and the user for what "done" means.
 
-## Session Wrap-Up
+## Session Wrap-Up (required before cleanup)
 
-For substantial sessions, write a brief devlog entry using the `/devlog` skill. Cover what was built or fixed, any key decisions made, and rejected approaches. Skip it for small one-line fixes.
+Before running `claude-team session done`, complete the following in order:
+
+### 1. Devlog
+
+Write a devlog entry for the session's work. Use the `/devlog` skill.
+Cover: what was built or fixed, any key decisions made, rejected approaches, risks.
+Do not skip this step — devlog is the institutional memory of the project.
+
+### 2. Plans
+
+If a plan was used this session, mark it executed:
+- Say "mark the plan executed" to trigger the plans skill
+- Or manually update the plan file's status to `executed`
+
+If no plan was used (small fix), note it briefly in the devlog instead.
+
+### 3. Cleanup
+
+Run `claude-team session done` to remove the worktree and close the branch in the index.
+
+This order matters: devlog and plan update happen while the worktree is still active
+and the code context is fresh. Cleanup is always last.
 
 ## Mode Selection
 

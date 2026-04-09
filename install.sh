@@ -93,24 +93,26 @@ fi
 echo ""
 echo "$(bold "Coordinator") — proactive team check-ins"
 echo ""
-echo "  When enabled, Claude will ask which team member to use at the start of"
-echo "  each task, and suggest switching when the conversation changes domain."
+echo "  $(bold "casual") (default): commit directly to main — no branch enforcement."
+echo "  $(bold "prod"):             branch required before any code; worktrees + MR/PR flow."
 echo ""
-printf "  Enable the coordinator now? [Y/n] "
+printf "  Enable the coordinator now? [casual/prod/n] (default: casual) "
 read -r coord_answer
-coord_answer="${coord_answer:-Y}"
+coord_answer="${coord_answer:-casual}"
 
 CLAUDE_MD="$HOME/.claude/CLAUDE.md"
 COORD_START="<!-- CLAUDE-COORDINATOR:START -->"
 COORD_END="<!-- CLAUDE-COORDINATOR:END -->"
-COORD_FILE="$PROFILES_DST/coordinator.md"
 
-if [[ "$(echo "$coord_answer" | tr '[:lower:]' '[:upper:]')" == "Y" ]]; then
-  touch "$CLAUDE_MD"
-  content=$(cat "$COORD_FILE")
+_install_coord() {
+  local coord_file="$1"
+  local label="$2"
+  local content
+  content=$(cat "$coord_file")
+  local block
   block=$(printf '%s\n%s\n%s' "$COORD_START" "$content" "$COORD_END")
-
   if grep -qF "$COORD_START" "$CLAUDE_MD"; then
+    local tmp
     tmp=$(mktemp)
     awk "/$COORD_START/{exit} {print}" "$CLAUDE_MD" > "$tmp"
     printf '%s\n%s\n%s\n' "$COORD_START" "$content" "$COORD_END" >> "$tmp"
@@ -119,10 +121,21 @@ if [[ "$(echo "$coord_answer" | tr '[:lower:]' '[:upper:]')" == "Y" ]]; then
   else
     printf '\n%s\n' "$block" >> "$CLAUDE_MD"
   fi
-  echo "  $(green "✓") Coordinator enabled."
-else
-  echo "  $(dim "Skipped. Enable later with: claude-team coordinator on")"
-fi
+  echo "  $(green "✓") Coordinator enabled ($label mode)."
+}
+
+touch "$CLAUDE_MD"
+case "$(echo "$coord_answer" | tr '[:upper:]' '[:lower:]')" in
+  prod)
+    _install_coord "$PROFILES_DST/coordinator-prod.md" "prod"
+    ;;
+  n|no)
+    echo "  $(dim "Skipped. Enable later with: claude-team coordinator on")"
+    ;;
+  *)
+    _install_coord "$PROFILES_DST/coordinator.md" "casual"
+    ;;
+esac
 
 echo ""
 echo "$(bold "Done!") Your Claude dev team is ready."
@@ -136,7 +149,9 @@ echo "  claude-team use toni               $(dim "# activate Toni (Product Marke
 echo "  claude-team use river              $(dim "# activate River (Product)")"
 echo "  claude-team use sage               $(dim "# activate Sage (Business Advisor)")"
 echo "  claude-team use kai                $(dim "# activate Kai (UX Design)")"
-echo "  claude-team coordinator on|off     $(dim "# toggle proactive check-ins")"
+echo "  claude-team coordinator on         $(dim "# casual mode (commit to main, no branch enforcement)")"
+echo "  claude-team coordinator prod       $(dim "# prod mode (branch required before code)")"
+echo "  claude-team coordinator off        $(dim "# disable coordinator")"
 echo "  claude-team reset                  $(dim "# return to default Claude")"
 echo ""
 echo "Parallel sessions (worktrees — preferred for multi-session work):"

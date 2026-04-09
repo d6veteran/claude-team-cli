@@ -443,10 +443,15 @@ When starting work on a new project or codebase, the coordinator verifies that a
 Enable it during installation or at any time:
 
 ```bash
-claude-team coordinator on    # enable proactive check-ins
+claude-team coordinator on    # casual mode — commit to main, no branch enforcement
+claude-team coordinator prod  # prod mode — branch required before any code
 claude-team coordinator off   # disable
 claude-team status            # see coordinator state + active team member
 ```
+
+**Casual mode** (default) is designed for personal projects, learning, and anyone who commits directly to `main`. The coordinator handles team member routing and mode suggestions, but skips branch gates entirely.
+
+**Prod mode** adds branch enforcement: Claude blocks code edits until a branch is registered, requires worktrees for parallel sessions, and prompts for an MR/PR before closing a session. This is the right choice for team projects, PRs, and anywhere discipline around branching matters.
 
 ---
 
@@ -562,8 +567,9 @@ claude-team use kai       # Kai (UX Design & Visual Art)
 claude-team status
 
 # Toggle proactive team check-ins
-claude-team coordinator on
-claude-team coordinator off
+claude-team coordinator on    # casual mode (no branch enforcement)
+claude-team coordinator prod  # prod mode (branch enforcement on)
+claude-team coordinator off   # disable
 
 # Return to default Claude behavior
 claude-team reset

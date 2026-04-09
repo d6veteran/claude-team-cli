@@ -172,6 +172,23 @@ out=$(run_cmd coordinator off)
 assert_contains "coordinator off when already off"   "already off" "$out"
 echo ""
 
+# coordinator prod
+echo "coordinator prod"
+run_cmd coordinator prod >/dev/null
+assert_file_has "coordinator prod injects block"      "$CLAUDE_MD" "CLAUDE-COORDINATOR:START"
+assert_file_has "coordinator prod contains mode tag"  "$CLAUDE_MD" "CLAUDE-COORD-MODE: prod"
+out=$(run_cmd coordinator prod)
+assert_contains "coordinator prod twice shows refresh" "refreshed" "$out"
+assert_count    "coordinator prod twice stays 1 block" "$CLAUDE_MD" "CLAUDE-COORDINATOR:START" 1
+run_cmd coordinator off >/dev/null
+
+# coordinator on installs casual
+echo "coordinator on installs casual"
+run_cmd coordinator on >/dev/null
+assert_file_has "coordinator on injects casual tag"  "$CLAUDE_MD" "CLAUDE-COORD-MODE: casual"
+run_cmd coordinator off >/dev/null
+echo ""
+
 # status
 echo "status"
 run_cmd use toni >/dev/null
@@ -179,7 +196,11 @@ out=$(run_cmd status)
 assert_contains "status shows active member" "Toni" "$out"
 run_cmd coordinator on >/dev/null
 out=$(run_cmd status)
-assert_contains "status shows coordinator on"  "on"  "$out"
+assert_contains "status shows coordinator casual" "casual" "$out"
+run_cmd coordinator off >/dev/null
+run_cmd coordinator prod >/dev/null
+out=$(run_cmd status)
+assert_contains "status shows coordinator prod"   "prod"  "$out"
 run_cmd coordinator off >/dev/null
 out=$(run_cmd status)
 assert_contains "status shows coordinator off" "off" "$out"
