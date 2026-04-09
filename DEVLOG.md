@@ -5,6 +5,55 @@ Auto-maintained via Claude devlog skill. Entries are reverse-chronological.
 
 ---
 
+## [2026-04-09] Casual/prod coordinator modes + README and roadmap overhaul
+
+**Category:** `milestone`
+**Tags:** `coordinator`, `branch-hygiene`, `casual-mode`, `prod-mode`, `readme`, `roadmap`, `v0.6`
+**Risk Level:** `low`
+**Breaking Change:** `no`
+
+### Summary
+
+Shipped v0.6: the coordinator now has two explicit workflow modes — casual (default, no branch enforcement) and prod (opt-in, full branch gates and MR/PR flow). Updated the README to surface the distinction clearly, created ROADMAP.md, and trimmed the README roadmap section to v0.4+.
+
+### Detail
+
+**Casual/prod coordinator modes:**
+- `coordinator.md` (default) is now the casual variant: no branch hygiene enforcement, simplified session checklist, greeting shows current git branch instead of INDEX.md registered branch
+- `coordinator-prod.md` is the full prod variant: all existing branch enforcement behavior preserved
+- `claude-team coordinator on` installs casual; `claude-team coordinator prod` installs prod
+- `claude-team status` shows `on (casual)` or `on (prod)`
+- New `_coordinator_install()` helper in `bin/claude-team` eliminates duplicated inject logic
+- `cmd_list()` updated to exclude all `coordinator*` profiles (was only excluding exact name `coordinator`)
+- `/prod-mode` and `/casual-mode` slash commands added and installed
+- `install.sh` prompts `[casual/prod/n]` instead of `Y/n` — default is casual
+- 6 new tests added; 82 total, all passing
+
+**README refactor:**
+- "What's New" updated to lead with casual/prod modes instead of branch hygiene
+- New "Workflow modes: casual and prod" subsection in the Coordinator section — appears before the enable commands, makes the default explicit, documents mid-session slash commands and installer prompt behavior
+- Branch Hygiene section now opens with a prod-mode-only callout so casual users know to skip it
+- Old buried 2-paragraph casual/prod explanation removed (replaced by the subsection)
+
+**Roadmap:**
+- README roadmap section trimmed to v0.4+; earlier history linked to DEVLOG.md
+- "Later" reframed as aspirational with `open an issue` link for community feedback
+- `ROADMAP.md` created — v0.6 shipping checklist, near-term items, aspirational backlog (local profile overrides, team-scoped profiles, session handoff briefing)
+
+### Decisions Made
+
+- **Orthogonal toggle over per-persona prod commands:** The user proposed `/akira-prod` style commands. Rejected in favor of `/prod-mode` as a standalone toggle — combining persona + mode in one command requires 12 files and creates maintenance overhead. `/akira` + `/prod-mode` achieves the same result orthogonally.
+- **`coordinator on` = casual (new default):** Prior to v0.6, `coordinator on` installed branch enforcement behavior. Now it installs casual. The alternative (keeping `coordinator on` as prod, adding `coordinator casual`) preserves backward compatibility but inverts the intent — casual should be the path of least resistance for new users.
+- **README trimmed to v0.4+:** The roadmap section was becoming a changelog. Trimming to recent versions and linking to DEVLOG reduces maintenance overhead while keeping reader-relevant history visible.
+
+### Related
+
+- Prompted by friction for casual users encountering branch enforcement gates
+- PR: code-katz/claude-team-cli#6 (merged)
+- Plan: `wobbly-launching-moth`
+
+---
+
 ## [2026-03-29] Added Design System collaboration loop between Kai and Sasha
 
 **Category:** `feature`
